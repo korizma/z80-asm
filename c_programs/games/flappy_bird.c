@@ -305,6 +305,7 @@ static void draw_title_screen(void) {
 }
 
 static void draw_game_over_text(void) {
+    text_clear_row(0u);
     text_clear_row(5u);
     text_clear_row(6u);
     text_clear_row(7u);

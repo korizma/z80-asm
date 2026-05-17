@@ -1445,44 +1445,50 @@ ___str_4:
 ; Function draw_game_over_text
 ; ---------------------------------
 _draw_game_over_text:
-;games/snake.c:252: text_clear_row(5u);
+;games/snake.c:252: text_clear_row(0u);
+	xor	a, a
+	push	af
+	inc	sp
+	call	_text_clear_row
+	inc	sp
+;games/snake.c:253: text_clear_row(5u);
 	ld	a, #0x05
 	push	af
 	inc	sp
 	call	_text_clear_row
 	inc	sp
-;games/snake.c:253: text_clear_row(6u);
+;games/snake.c:254: text_clear_row(6u);
 	ld	a, #0x06
 	push	af
 	inc	sp
 	call	_text_clear_row
 	inc	sp
-;games/snake.c:254: text_clear_row(7u);
+;games/snake.c:255: text_clear_row(7u);
 	ld	a, #0x07
 	push	af
 	inc	sp
 	call	_text_clear_row
 	inc	sp
-;games/snake.c:255: text_clear_row(8u);
+;games/snake.c:256: text_clear_row(8u);
 	ld	a, #0x08
 	push	af
 	inc	sp
 	call	_text_clear_row
 	inc	sp
-;games/snake.c:256: text_clear_row(10u);
+;games/snake.c:257: text_clear_row(10u);
 	ld	a, #0x0a
 	push	af
 	inc	sp
 	call	_text_clear_row
 	inc	sp
-;games/snake.c:257: text_write(5u, 3u, "GAME OVER");
+;games/snake.c:258: text_write(5u, 3u, "GAME OVER");
 	ld	hl, #___str_5
 	push	hl
 	ld	de, #0x0305
 	push	de
 	call	_text_write
 	pop	af
-;games/snake.c:258: text_write(7u, 4u, "SCORE");
+;games/snake.c:259: text_write(7u, 4u, "SCORE");
 	ld	hl, #___str_6
 	ex	(sp),hl
 	ld	de, #0x0407
@@ -1490,7 +1496,7 @@ _draw_game_over_text:
 	call	_text_write
 	pop	af
 	pop	af
-;games/snake.c:259: text_write_u8_3(7u, 10u, score);
+;games/snake.c:260: text_write_u8_3(7u, 10u, score);
 	ld	a,(#_score + 0)
 	ld	d,a
 	ld	e,#0x0a
@@ -1499,7 +1505,7 @@ _draw_game_over_text:
 	push	af
 	inc	sp
 	call	_text_write_u8_3
-;games/snake.c:260: text_write(10u, 1u, "CENTER/A MENU");
+;games/snake.c:261: text_write(10u, 1u, "CENTER/A MENU");
 	inc	sp
 	ld	hl,#___str_7
 	ex	(sp),hl
@@ -1508,7 +1514,7 @@ _draw_game_over_text:
 	call	_text_write
 	pop	af
 	pop	af
-;games/snake.c:261: }
+;games/snake.c:262: }
 	ret
 ___str_5:
 	.ascii "GAME OVER"
@@ -1519,7 +1525,7 @@ ___str_6:
 ___str_7:
 	.ascii "CENTER/A MENU"
 	.db 0x00
-;games/snake.c:263: static unsigned char advance_snake(void) {
+;games/snake.c:264: static unsigned char advance_snake(void) {
 ;	---------------------------------
 ; Function advance_snake
 ; ---------------------------------
@@ -1530,15 +1536,15 @@ _advance_snake:
 	ld	hl, #-6
 	add	hl, sp
 	ld	sp, hl
-;games/snake.c:270: last_head_x = snake_x[0];
+;games/snake.c:271: last_head_x = snake_x[0];
 	ld	bc, #_snake_x+0
 	ld	a, (bc)
 	ld	(_last_head_x+0), a
-;games/snake.c:271: last_head_y = snake_y[0];
+;games/snake.c:272: last_head_y = snake_y[0];
 	ld	hl, #_snake_y
 	ld	a, (hl)
 	ld	(_last_head_y+0), a
-;games/snake.c:272: last_tail_x = snake_x[snake_len - 1u];
+;games/snake.c:273: last_tail_x = snake_x[snake_len - 1u];
 	ld	a, (#_snake_len + 0)
 	ld	e, a
 	dec	e
@@ -1547,110 +1553,110 @@ _advance_snake:
 	add	hl, bc
 	ld	a, (hl)
 	ld	(_last_tail_x+0), a
-;games/snake.c:273: last_tail_y = snake_y[snake_len - 1u];
+;games/snake.c:274: last_tail_y = snake_y[snake_len - 1u];
 	ld	hl, #_snake_y
 	ld	d, #0x00
 	add	hl, de
 	ld	a, (hl)
 	ld	(_last_tail_y+0), a
-;games/snake.c:274: last_grew = 0u;
+;games/snake.c:275: last_grew = 0u;
 	ld	hl, #_last_grew
 	ld	(hl), #0x00
-;games/snake.c:275: last_ate_fruit = 0u;
+;games/snake.c:276: last_ate_fruit = 0u;
 	ld	hl, #_last_ate_fruit
 	ld	(hl), #0x00
-;games/snake.c:277: new_x = snake_x[0];
+;games/snake.c:278: new_x = snake_x[0];
 	ld	a, (bc)
 	ld	e, a
-;games/snake.c:278: new_y = snake_y[0];
+;games/snake.c:279: new_y = snake_y[0];
 	ld	hl, #_snake_y
 	ld	d, (hl)
-;games/snake.c:280: if (direction == DIR_UP) {
+;games/snake.c:281: if (direction == DIR_UP) {
 	ld	a,(#_direction + 0)
-;games/snake.c:281: if (new_y == 0u) {
+;games/snake.c:282: if (new_y == 0u) {
 	or	a,a
 	jr	NZ, 00116$
 	or	a,d
 	jr	NZ, 00102$
-;games/snake.c:282: return 1u;
+;games/snake.c:283: return 1u;
 	ld	l, #0x01
 	jp	00136$
 00102$:
-;games/snake.c:284: --new_y;
+;games/snake.c:285: --new_y;
 	dec	d
 	jr	00117$
 00116$:
-;games/snake.c:285: } else if (direction == DIR_RIGHT) {
+;games/snake.c:286: } else if (direction == DIR_RIGHT) {
 	ld	a,(#_direction + 0)
 	dec	a
 	jr	NZ, 00113$
-;games/snake.c:286: if (new_x == 15u) {
+;games/snake.c:287: if (new_x == 15u) {
 	ld	a, e
 	sub	a, #0x0f
 	jr	NZ, 00104$
-;games/snake.c:287: return 1u;
+;games/snake.c:288: return 1u;
 	ld	l, #0x01
 	jp	00136$
 00104$:
-;games/snake.c:289: ++new_x;
+;games/snake.c:290: ++new_x;
 	inc	e
 	jr	00117$
 00113$:
-;games/snake.c:290: } else if (direction == DIR_DOWN) {
+;games/snake.c:291: } else if (direction == DIR_DOWN) {
 	ld	a,(#_direction + 0)
 	sub	a, #0x02
 	jr	NZ, 00110$
-;games/snake.c:291: if (new_y == 15u) {
+;games/snake.c:292: if (new_y == 15u) {
 	ld	a, d
 	sub	a, #0x0f
 	jr	NZ, 00106$
-;games/snake.c:292: return 1u;
+;games/snake.c:293: return 1u;
 	ld	l, #0x01
 	jp	00136$
 00106$:
-;games/snake.c:294: ++new_y;
+;games/snake.c:295: ++new_y;
 	inc	d
 	jr	00117$
 00110$:
-;games/snake.c:296: if (new_x == 0u) {
+;games/snake.c:297: if (new_x == 0u) {
 	ld	a, e
 	or	a, a
 	jr	NZ, 00108$
-;games/snake.c:297: return 1u;
+;games/snake.c:298: return 1u;
 	ld	l, #0x01
 	jp	00136$
 00108$:
-;games/snake.c:299: --new_x;
+;games/snake.c:300: --new_x;
 	dec	e
 00117$:
-;games/snake.c:302: grow = 0u;
+;games/snake.c:303: grow = 0u;
 	ld	-4 (ix), #0
-;games/snake.c:303: if ((new_x == fruit_x) && (new_y == fruit_y)) {
+;games/snake.c:304: if ((new_x == fruit_x) && (new_y == fruit_y)) {
 	ld	a,(#_fruit_x + 0)
 	sub	a, e
 	jr	NZ, 00119$
 	ld	a,(#_fruit_y + 0)
 	sub	a, d
 	jr	NZ, 00119$
-;games/snake.c:304: grow = 1u;
+;games/snake.c:305: grow = 1u;
 	ld	-4 (ix), #0x01
-;games/snake.c:305: last_ate_fruit = 1u;
+;games/snake.c:306: last_ate_fruit = 1u;
 	ld	hl, #_last_ate_fruit
 	ld	(hl), #0x01
 00119$:
-;games/snake.c:308: collision_count = snake_len;
+;games/snake.c:309: collision_count = snake_len;
 	ld	a, (#_snake_len + 0)
 	ld	h, a
-;games/snake.c:309: if ((grow == 0u) && (collision_count != 0u)) {
+;games/snake.c:310: if ((grow == 0u) && (collision_count != 0u)) {
 	ld	a, -4 (ix)
 	or	a,a
 	jr	NZ, 00122$
 	or	a,h
 	jr	Z, 00122$
-;games/snake.c:310: --collision_count;
+;games/snake.c:311: --collision_count;
 	dec	h
 00122$:
-;games/snake.c:312: if (snake_contains(new_x, new_y, collision_count) != 0u) {
+;games/snake.c:313: if (snake_contains(new_x, new_y, collision_count) != 0u) {
 	push	bc
 	push	de
 	ld	l, d
@@ -1666,11 +1672,11 @@ _advance_snake:
 	pop	bc
 	or	a, a
 	jr	Z, 00125$
-;games/snake.c:313: return 1u;
+;games/snake.c:314: return 1u;
 	ld	l, #0x01
 	jp	00136$
 00125$:
-;games/snake.c:316: if ((grow != 0u) && (snake_len < SNAKE_MAX)) {
+;games/snake.c:317: if ((grow != 0u) && (snake_len < SNAKE_MAX)) {
 	ld	a, -4 (ix)
 	or	a, a
 	jr	Z, 00129$
@@ -1678,29 +1684,29 @@ _advance_snake:
 	ld	a, 0 (iy)
 	sub	a, #0x40
 	jr	NC, 00129$
-;games/snake.c:317: ++snake_len;
+;games/snake.c:318: ++snake_len;
 	inc	0 (iy)
-;games/snake.c:318: last_grew = 1u;
+;games/snake.c:319: last_grew = 1u;
 	ld	hl, #_last_grew
 	ld	(hl), #0x01
-;games/snake.c:319: if (score < 255u) {
+;games/snake.c:320: if (score < 255u) {
 	ld	iy, #_score
 	ld	a, 0 (iy)
 	sub	a, #0xff
 	jr	NC, 00129$
-;games/snake.c:320: ++score;
+;games/snake.c:321: ++score;
 	inc	0 (iy)
 00129$:
-;games/snake.c:324: i = (unsigned char)(snake_len - 1u);
+;games/snake.c:325: i = (unsigned char)(snake_len - 1u);
 	ld	a,(#_snake_len + 0)
 	add	a, #0xff
 	ld	-1 (ix), a
-;games/snake.c:325: while (i != 0u) {
+;games/snake.c:326: while (i != 0u) {
 00131$:
 	ld	a, -1 (ix)
 	or	a, a
 	jr	Z, 00133$
-;games/snake.c:326: snake_x[i] = snake_x[i - 1u];
+;games/snake.c:327: snake_x[i] = snake_x[i - 1u];
 	ld	a, c
 	add	a, -1 (ix)
 	ld	-6 (ix), a
@@ -1717,7 +1723,7 @@ _advance_snake:
 	pop	hl
 	push	hl
 	ld	(hl), a
-;games/snake.c:327: snake_y[i] = snake_y[i - 1u];
+;games/snake.c:328: snake_y[i] = snake_y[i - 1u];
 	ld	a, -1 (ix)
 	add	a, #<(_snake_y)
 	ld	-2 (ix), a
@@ -1734,41 +1740,41 @@ _advance_snake:
 	ld	l, -2 (ix)
 	ld	h, -1 (ix)
 	ld	(hl), a
-;games/snake.c:328: --i;
+;games/snake.c:329: --i;
 	ld	a, -3 (ix)
 	ld	-1 (ix), a
 	jr	00131$
 00133$:
-;games/snake.c:330: snake_x[0] = new_x;
+;games/snake.c:331: snake_x[0] = new_x;
 	ld	a, e
 	ld	(bc), a
-;games/snake.c:331: snake_y[0] = new_y;
+;games/snake.c:332: snake_y[0] = new_y;
 	ld	hl, #_snake_y
 	ld	(hl), d
-;games/snake.c:333: if (grow != 0u) {
+;games/snake.c:334: if (grow != 0u) {
 	ld	a, -4 (ix)
 	or	a, a
 	jr	Z, 00135$
-;games/snake.c:334: place_fruit();
+;games/snake.c:335: place_fruit();
 	call	_place_fruit
 00135$:
-;games/snake.c:337: return 0u;
+;games/snake.c:338: return 0u;
 	ld	l, #0x00
 00136$:
-;games/snake.c:338: }
+;games/snake.c:339: }
 	ld	sp, ix
 	pop	ix
 	ret
-;games/snake.c:340: static void draw_snake_step(void) {
+;games/snake.c:341: static void draw_snake_step(void) {
 ;	---------------------------------
 ; Function draw_snake_step
 ; ---------------------------------
 _draw_snake_step:
-;games/snake.c:341: if (last_grew == 0u) {
+;games/snake.c:342: if (last_grew == 0u) {
 	ld	a,(#_last_grew + 0)
 	or	a, a
 	jr	NZ, 00102$
-;games/snake.c:342: draw_floor_tile(last_tail_x, last_tail_y);
+;games/snake.c:343: draw_floor_tile(last_tail_x, last_tail_y);
 	ld	a,(#_last_tail_y + 0)
 	push	af
 	inc	sp
@@ -1778,7 +1784,7 @@ _draw_snake_step:
 	call	_draw_floor_tile
 	pop	af
 00102$:
-;games/snake.c:344: glic_draw_tile8(last_head_x, last_head_y, snake_body);
+;games/snake.c:345: glic_draw_tile8(last_head_x, last_head_y, snake_body);
 	ld	hl, #_snake_body
 	push	hl
 	ld	a,(#_last_head_y + 0)
@@ -1790,7 +1796,7 @@ _draw_snake_step:
 	call	_glic_draw_tile8
 	pop	af
 	pop	af
-;games/snake.c:345: glic_draw_tile8(snake_x[0], snake_y[0], snake_head);
+;games/snake.c:346: glic_draw_tile8(snake_x[0], snake_y[0], snake_head);
 	ld	de, #_snake_head+0
 	ld	hl, #_snake_y+0
 	ld	b, (hl)
@@ -1803,11 +1809,11 @@ _draw_snake_step:
 	call	_glic_draw_tile8
 	pop	af
 	pop	af
-;games/snake.c:346: if (last_ate_fruit != 0u) {
+;games/snake.c:347: if (last_ate_fruit != 0u) {
 	ld	a,(#_last_ate_fruit + 0)
 	or	a, a
 	ret	Z
-;games/snake.c:347: glic_draw_tile8(fruit_x, fruit_y, fruit_tile);
+;games/snake.c:348: glic_draw_tile8(fruit_x, fruit_y, fruit_tile);
 	ld	hl, #_fruit_tile
 	push	hl
 	ld	a,(#_fruit_y + 0)
@@ -1819,18 +1825,18 @@ _draw_snake_step:
 	call	_glic_draw_tile8
 	pop	af
 	pop	af
-;games/snake.c:348: draw_score();
-;games/snake.c:350: }
+;games/snake.c:349: draw_score();
+;games/snake.c:351: }
 	jp	_draw_score
-;games/snake.c:352: static void read_controls_during_delay(void) {
+;games/snake.c:353: static void read_controls_during_delay(void) {
 ;	---------------------------------
 ; Function read_controls_during_delay
 ; ---------------------------------
 _read_controls_during_delay:
-;games/snake.c:355: for (i = 0u; i < 8u; ++i) {
+;games/snake.c:356: for (i = 0u; i < 8u; ++i) {
 	ld	c, #0x00
 00102$:
-;games/snake.c:356: update_direction(glic_read_buttons());
+;games/snake.c:357: update_direction(glic_read_buttons());
 	push	bc
 	call	_glic_read_buttons
 	ld	a, l
@@ -1843,66 +1849,66 @@ _read_controls_during_delay:
 	call	_glic_delay
 	pop	af
 	pop	bc
-;games/snake.c:355: for (i = 0u; i < 8u; ++i) {
+;games/snake.c:356: for (i = 0u; i < 8u; ++i) {
 	inc	c
 	ld	a, c
 	sub	a, #0x08
 	jr	C, 00102$
-;games/snake.c:359: }
+;games/snake.c:360: }
 	ret
-;games/snake.c:361: void main(void) {
+;games/snake.c:362: void main(void) {
 ;	---------------------------------
 ; Function main
 ; ---------------------------------
 _main::
-;games/snake.c:364: rng_state = 0xa7u;
+;games/snake.c:365: rng_state = 0xa7u;
 	ld	hl, #_rng_state
 	ld	(hl), #0xa7
-;games/snake.c:366: while (1) {
+;games/snake.c:367: while (1) {
 00107$:
-;games/snake.c:367: draw_title_screen();
+;games/snake.c:368: draw_title_screen();
 	call	_draw_title_screen
-;games/snake.c:368: wait_for_start_press();
+;games/snake.c:369: wait_for_start_press();
 	call	_wait_for_start_press
-;games/snake.c:369: reset_game();
+;games/snake.c:370: reset_game();
 	call	_reset_game
-;games/snake.c:370: glic_clear_text();
+;games/snake.c:371: glic_clear_text();
 	call	_glic_clear_text
-;games/snake.c:371: draw_board();
+;games/snake.c:372: draw_board();
 	call	_draw_board
-;games/snake.c:372: draw_snake();
+;games/snake.c:373: draw_snake();
 	call	_draw_snake
-;games/snake.c:373: draw_score();
+;games/snake.c:374: draw_score();
 	call	_draw_score
-;games/snake.c:374: dead = 0u;
+;games/snake.c:375: dead = 0u;
 	ld	c, #0x00
-;games/snake.c:376: while (dead == 0u) {
+;games/snake.c:377: while (dead == 0u) {
 00103$:
 	ld	a, c
 	or	a, a
 	jr	NZ, 00105$
-;games/snake.c:377: read_controls_during_delay();
+;games/snake.c:378: read_controls_during_delay();
 	call	_read_controls_during_delay
-;games/snake.c:378: dead = advance_snake();
+;games/snake.c:379: dead = advance_snake();
 	call	_advance_snake
 	ld	a, l
 	ld	c, a
-;games/snake.c:379: if (dead == 0u) {
+;games/snake.c:380: if (dead == 0u) {
 	or	a, a
 	jr	NZ, 00103$
-;games/snake.c:380: draw_snake_step();
+;games/snake.c:381: draw_snake_step();
 	push	bc
 	call	_draw_snake_step
 	pop	bc
 	jr	00103$
 00105$:
-;games/snake.c:384: draw_game_over_border();
+;games/snake.c:385: draw_game_over_border();
 	call	_draw_game_over_border
-;games/snake.c:385: draw_game_over_text();
+;games/snake.c:386: draw_game_over_text();
 	call	_draw_game_over_text
-;games/snake.c:386: wait_for_start_press();
+;games/snake.c:387: wait_for_start_press();
 	call	_wait_for_start_press
-;games/snake.c:388: }
+;games/snake.c:389: }
 	jr	00107$
 	.area _CODE
 	.area _INITIALIZER
