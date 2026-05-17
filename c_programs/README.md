@@ -24,6 +24,15 @@ Generated binaries are written under `c_programs/bin/`.
 Each binary starts with a GLIČ80 title header using the source filename stem,
 for example `games/snake.c` is named `snake`.
 
+The `apps/` directory includes:
+
+- `text_editor.c`: a three-slot RAM text editor. Use up/down to pick a file,
+  joystick center to edit, `[A]` to view, `[B]` to erase, and `[C]` for help.
+  In the editor, move around the on-screen keyboard with the joystick, press
+  center to type, `[A]` to save, `[B]` to delete, and `[C]` to return to the
+  file list. Saved files stay in RAM while the editor is running; restarting a
+  Z80 program reloads clean memory on GLIČ80 hardware.
+
 The `games/` directory includes:
 
 - `flappy_bird.c`: press joystick center, up, or `[A]` to flap.

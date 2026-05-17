@@ -1,7 +1,7 @@
 ROOT := ..
 TOOL := $(ROOT)/tools/sdcc-z80-bin
 
-SOURCES := test_main.c $(wildcard flags/*.c) $(wildcard games/*.c)
+SOURCES := test_main.c $(wildcard apps/*.c) $(wildcard flags/*.c) $(wildcard games/*.c)
 BINS := $(SOURCES:%.c=bin/%.bin)
 ASMS := $(SOURCES:%.c=asm/%.asm)
 
