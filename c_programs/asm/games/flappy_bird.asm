@@ -463,18 +463,18 @@ _glic_fill_columns:
 	jr	C, 00102$
 ;games/../common/glic80.h:152: }
 	ret
-;games/flappy_bird.c:28: static unsigned char random8(void) {
+;games/flappy_bird.c:40: static unsigned char random8(void) {
 ;	---------------------------------
 ; Function random8
 ; ---------------------------------
 _random8:
-;games/flappy_bird.c:31: bit = (unsigned char)(((rng_state >> 7) ^
+;games/flappy_bird.c:43: bit = (unsigned char)(((rng_state >> 7) ^
 	ld	iy, #_rng_state
 	ld	a, 0 (iy)
 	rlca
 	and	a, #0x01
 	ld	c, a
-;games/flappy_bird.c:32: (rng_state >> 5) ^
+;games/flappy_bird.c:44: (rng_state >> 5) ^
 	ld	a, 0 (iy)
 	rlca
 	rlca
@@ -482,7 +482,7 @@ _random8:
 	and	a, #0x07
 	xor	a, c
 	ld	c, a
-;games/flappy_bird.c:33: (rng_state >> 4) ^
+;games/flappy_bird.c:45: (rng_state >> 4) ^
 	ld	a, 0 (iy)
 	rlca
 	rlca
@@ -490,40 +490,40 @@ _random8:
 	rlca
 	and	a, #0x0f
 	xor	a, c
-;games/flappy_bird.c:34: (rng_state >> 3)) & 1u);
+;games/flappy_bird.c:46: (rng_state >> 3)) & 1u);
 	ld	c, 0 (iy)
 	srl	c
 	srl	c
 	srl	c
 	xor	a, c
 	and	a, #0x01
-;games/flappy_bird.c:35: rng_state = (unsigned char)((rng_state << 1) | bit);
+;games/flappy_bird.c:47: rng_state = (unsigned char)((rng_state << 1) | bit);
 	ld	c, 0 (iy)
 	sla	c
 	or	a, c
 	ld	(_rng_state+0), a
-;games/flappy_bird.c:36: return rng_state;
+;games/flappy_bird.c:48: return rng_state;
 	ld	l, 0 (iy)
-;games/flappy_bird.c:37: }
+;games/flappy_bird.c:49: }
 	ret
 _bird_wing_up:
 	.db #0x18	; 24
 	.db #0x3c	; 60
 	.db #0x7e	; 126
-	.db #0xff	; 255
-	.db #0x7e	; 126
-	.db #0x5a	; 90	'Z'
-	.db #0x24	; 36
-	.db #0x00	; 0
+	.db #0xef	; 239
+	.db #0xfe	; 254
+	.db #0x5c	; 92
+	.db #0x38	; 56	'8'
+	.db #0x10	; 16
 _bird_wing_down:
 	.db #0x18	; 24
 	.db #0x3c	; 60
 	.db #0x7e	; 126
-	.db #0xff	; 255
-	.db #0x7e	; 126
-	.db #0x24	; 36
-	.db #0x5a	; 90	'Z'
-	.db #0x00	; 0
+	.db #0xef	; 239
+	.db #0xfe	; 254
+	.db #0x38	; 56	'8'
+	.db #0x5c	; 92
+	.db #0x10	; 16
 _bird_crash:
 	.db #0x81	; 129
 	.db #0x42	; 66	'B'
@@ -535,15 +535,65 @@ _bird_crash:
 	.db #0x81	; 129
 _pipe_texture:
 	.db #0xff	; 255
-	.db #0xe7	; 231
 	.db #0xdb	; 219
 	.db #0xe7	; 231
-;games/flappy_bird.c:39: static unsigned char flap_pressed(unsigned char buttons) {
+	.db #0xbd	; 189
+_cloud_top:
+	.db #0x00	; 0
+	.db #0x18	; 24
+	.db #0x3c	; 60
+	.db #0x7e	; 126
+	.db #0x7e	; 126
+	.db #0xff	; 255
+	.db #0xff	; 255
+	.db #0x7e	; 126
+	.db #0x3c	; 60
+	.db #0x18	; 24
+	.db #0x00	; 0
+	.db #0x38	; 56	'8'
+	.db #0x7c	; 124
+	.db #0xfe	; 254
+	.db #0xfe	; 254
+	.db #0x7c	; 124
+	.db #0x38	; 56	'8'
+	.db #0x00	; 0
+	.db #0x18	; 24
+	.db #0x3c	; 60
+	.db #0x7e	; 126
+	.db #0x3c	; 60
+	.db #0x18	; 24
+	.db #0x00	; 0
+_cloud_bottom:
+	.db #0x00	; 0
+	.db #0x00	; 0
+	.db #0x18	; 24
+	.db #0x3c	; 60
+	.db #0x7e	; 126
+	.db #0xff	; 255
+	.db #0xff	; 255
+	.db #0xff	; 255
+	.db #0xff	; 255
+	.db #0x7e	; 126
+	.db #0x3c	; 60
+	.db #0x7c	; 124
+	.db #0xfe	; 254
+	.db #0xff	; 255
+	.db #0xff	; 255
+	.db #0xfe	; 254
+	.db #0x7c	; 124
+	.db #0x3c	; 60
+	.db #0x7e	; 126
+	.db #0xff	; 255
+	.db #0x7e	; 126
+	.db #0x3c	; 60
+	.db #0x00	; 0
+	.db #0x00	; 0
+;games/flappy_bird.c:51: static unsigned char flap_pressed(unsigned char buttons) {
 ;	---------------------------------
 ; Function flap_pressed
 ; ---------------------------------
 _flap_pressed:
-;games/flappy_bird.c:40: return (buttons & FLAP_MASK) != FLAP_MASK;
+;games/flappy_bird.c:52: return (buttons & FLAP_MASK) != FLAP_MASK;
 	ld	iy, #2
 	add	iy, sp
 	ld	a, 0 (iy)
@@ -559,14 +609,14 @@ _flap_pressed:
 00104$:
 	xor	a, #0x01
 	ld	l, a
-;games/flappy_bird.c:41: }
+;games/flappy_bird.c:53: }
 	ret
-;games/flappy_bird.c:43: static void wait_for_flap_press(void) {
+;games/flappy_bird.c:55: static void wait_for_flap_press(void) {
 ;	---------------------------------
 ; Function wait_for_flap_press
 ; ---------------------------------
 _wait_for_flap_press:
-;games/flappy_bird.c:44: while (flap_pressed(glic_read_buttons()) != 0u) {
+;games/flappy_bird.c:56: while (flap_pressed(glic_read_buttons()) != 0u) {
 00101$:
 	call	_glic_read_buttons
 	ld	a, l
@@ -577,10 +627,10 @@ _wait_for_flap_press:
 	inc	sp
 	or	a, a
 	jr	Z, 00104$
-;games/flappy_bird.c:45: random8();
+;games/flappy_bird.c:57: random8();
 	call	_random8
 	jr	00101$
-;games/flappy_bird.c:47: while (flap_pressed(glic_read_buttons()) == 0u) {
+;games/flappy_bird.c:59: while (flap_pressed(glic_read_buttons()) == 0u) {
 00104$:
 	call	_glic_read_buttons
 	ld	a, l
@@ -591,10 +641,10 @@ _wait_for_flap_press:
 	inc	sp
 	or	a, a
 	jr	NZ, 00107$
-;games/flappy_bird.c:48: random8();
+;games/flappy_bird.c:60: random8();
 	call	_random8
 	jr	00104$
-;games/flappy_bird.c:50: while (flap_pressed(glic_read_buttons()) != 0u) {
+;games/flappy_bird.c:62: while (flap_pressed(glic_read_buttons()) != 0u) {
 00107$:
 	call	_glic_read_buttons
 	ld	a, l
@@ -605,16 +655,16 @@ _wait_for_flap_press:
 	ld	a, l
 	or	a, a
 	ret	Z
-;games/flappy_bird.c:51: random8();
+;games/flappy_bird.c:63: random8();
 	call	_random8
-;games/flappy_bird.c:53: }
+;games/flappy_bird.c:65: }
 	jr	00107$
-;games/flappy_bird.c:55: static volatile unsigned char *text_cell(unsigned char row,
+;games/flappy_bird.c:67: static volatile unsigned char *text_cell(unsigned char row,
 ;	---------------------------------
 ; Function text_cell
 ; ---------------------------------
 _text_cell:
-;games/flappy_bird.c:60: while (row != 0u) {
+;games/flappy_bird.c:72: while (row != 0u) {
 	ld	bc, #0x7700
 	ld	iy, #2
 	add	iy, sp
@@ -623,18 +673,18 @@ _text_cell:
 	ld	a, l
 	or	a, a
 	jr	Z, 00103$
-;games/flappy_bird.c:61: p += 16u;
+;games/flappy_bird.c:73: p += 16u;
 	ld	a, c
 	add	a, #0x10
 	ld	c, a
 	jr	NC, 00117$
 	inc	b
 00117$:
-;games/flappy_bird.c:62: --row;
+;games/flappy_bird.c:74: --row;
 	dec	l
 	jr	00101$
 00103$:
-;games/flappy_bird.c:64: p += col;
+;games/flappy_bird.c:76: p += col;
 	ld	a, c
 	ld	hl, #3
 	add	hl, sp
@@ -644,15 +694,15 @@ _text_cell:
 	inc	b
 00118$:
 	ld	h, b
-;games/flappy_bird.c:65: return p;
-;games/flappy_bird.c:66: }
+;games/flappy_bird.c:77: return p;
+;games/flappy_bird.c:78: }
 	ret
-;games/flappy_bird.c:68: static void text_put(unsigned char row, unsigned char col, unsigned char ch) {
+;games/flappy_bird.c:80: static void text_put(unsigned char row, unsigned char col, unsigned char ch) {
 ;	---------------------------------
 ; Function text_put
 ; ---------------------------------
 _text_put:
-;games/flappy_bird.c:69: if ((row >= 16u) || (col >= 16u)) {
+;games/flappy_bird.c:81: if ((row >= 16u) || (col >= 16u)) {
 	ld	iy, #2
 	add	iy, sp
 	ld	a, 0 (iy)
@@ -660,9 +710,9 @@ _text_put:
 	ret	NC
 	ld	a, 1 (iy)
 	sub	a, #0x10
-;games/flappy_bird.c:70: return;
+;games/flappy_bird.c:82: return;
 	ret	NC
-;games/flappy_bird.c:72: *text_cell(row, col) = ch;
+;games/flappy_bird.c:84: *text_cell(row, col) = ch;
 	ld	iy, #3
 	add	iy, sp
 	ld	h, 0 (iy)
@@ -674,17 +724,17 @@ _text_put:
 	add	iy, sp
 	ld	a, 0 (iy)
 	ld	(hl), a
-;games/flappy_bird.c:73: }
+;games/flappy_bird.c:85: }
 	ret
-;games/flappy_bird.c:75: static void text_clear_row(unsigned char row) {
+;games/flappy_bird.c:87: static void text_clear_row(unsigned char row) {
 ;	---------------------------------
 ; Function text_clear_row
 ; ---------------------------------
 _text_clear_row:
-;games/flappy_bird.c:78: for (col = 0u; col < 16u; ++col) {
+;games/flappy_bird.c:90: for (col = 0u; col < 16u; ++col) {
 	ld	b, #0x00
 00102$:
-;games/flappy_bird.c:79: text_put(row, col, 0u);
+;games/flappy_bird.c:91: text_put(row, col, 0u);
 	push	bc
 	xor	a, a
 	push	af
@@ -700,19 +750,19 @@ _text_clear_row:
 	pop	af
 	inc	sp
 	pop	bc
-;games/flappy_bird.c:78: for (col = 0u; col < 16u; ++col) {
+;games/flappy_bird.c:90: for (col = 0u; col < 16u; ++col) {
 	inc	b
 	ld	a, b
 	sub	a, #0x10
 	jr	C, 00102$
-;games/flappy_bird.c:81: }
+;games/flappy_bird.c:93: }
 	ret
-;games/flappy_bird.c:83: static void text_write(unsigned char row, unsigned char col, const char *text) {
+;games/flappy_bird.c:95: static void text_write(unsigned char row, unsigned char col, const char *text) {
 ;	---------------------------------
 ; Function text_write
 ; ---------------------------------
 _text_write:
-;games/flappy_bird.c:84: while ((*text != 0) && (col < 16u)) {
+;games/flappy_bird.c:96: while ((*text != 0) && (col < 16u)) {
 	ld	iy, #4
 	add	iy, sp
 	ld	l, 0 (iy)
@@ -726,7 +776,7 @@ _text_write:
 	ld	a, b
 	sub	a, #0x10
 	ret	NC
-;games/flappy_bird.c:85: text_put(row, col, (unsigned char)*text);
+;games/flappy_bird.c:97: text_put(row, col, (unsigned char)*text);
 	push	hl
 	push	bc
 	ld	e, b
@@ -741,13 +791,13 @@ _text_write:
 	inc	sp
 	pop	bc
 	pop	hl
-;games/flappy_bird.c:86: ++text;
+;games/flappy_bird.c:98: ++text;
 	inc	hl
-;games/flappy_bird.c:87: ++col;
+;games/flappy_bird.c:99: ++col;
 	inc	b
-;games/flappy_bird.c:89: }
+;games/flappy_bird.c:101: }
 	jr	00102$
-;games/flappy_bird.c:91: static void text_write_u8_3(unsigned char row,
+;games/flappy_bird.c:103: static void text_write_u8_3(unsigned char row,
 ;	---------------------------------
 ; Function text_write_u8_3
 ; ---------------------------------
@@ -755,34 +805,34 @@ _text_write_u8_3:
 	push	ix
 	ld	ix,#0
 	add	ix,sp
-;games/flappy_bird.c:98: while (value >= 100u) {
+;games/flappy_bird.c:110: while (value >= 100u) {
 	ld	d, 6 (ix)
 	ld	c, #0x00
 00101$:
-;games/flappy_bird.c:99: value = (unsigned char)(value - 100u);
+;games/flappy_bird.c:111: value = (unsigned char)(value - 100u);
 	ld	a,d
 	cp	a,#0x64
 	jr	C, 00113$
 	add	a, #0x9c
 	ld	d, a
-;games/flappy_bird.c:100: ++hundreds;
+;games/flappy_bird.c:112: ++hundreds;
 	inc	c
 	jr	00101$
 00113$:
-;games/flappy_bird.c:103: while (value >= 10u) {
+;games/flappy_bird.c:115: while (value >= 10u) {
 	ld	e, #0x00
 00104$:
-;games/flappy_bird.c:104: value = (unsigned char)(value - 10u);
+;games/flappy_bird.c:116: value = (unsigned char)(value - 10u);
 	ld	a,d
 	cp	a,#0x0a
 	jr	C, 00106$
 	add	a, #0xf6
 	ld	d, a
-;games/flappy_bird.c:105: ++tens;
+;games/flappy_bird.c:117: ++tens;
 	inc	e
 	jr	00104$
 00106$:
-;games/flappy_bird.c:107: text_put(row, col, (unsigned char)('0' + hundreds));
+;games/flappy_bird.c:119: text_put(row, col, (unsigned char)('0' + hundreds));
 	ld	a, c
 	add	a, #0x30
 	push	de
@@ -795,7 +845,7 @@ _text_write_u8_3:
 	pop	af
 	inc	sp
 	pop	de
-;games/flappy_bird.c:108: text_put(row, (unsigned char)(col + 1u), (unsigned char)('0' + tens));
+;games/flappy_bird.c:120: text_put(row, (unsigned char)(col + 1u), (unsigned char)('0' + tens));
 	ld	a, e
 	add	a, #0x30
 	ld	b, 5 (ix)
@@ -812,14 +862,14 @@ _text_write_u8_3:
 	pop	af
 	inc	sp
 	pop	de
-;games/flappy_bird.c:111: (unsigned char)('0' + value));
+;games/flappy_bird.c:123: (unsigned char)('0' + value));
 	ld	a, d
 	add	a, #0x30
-;games/flappy_bird.c:110: (unsigned char)(col + 2u),
+;games/flappy_bird.c:122: (unsigned char)(col + 2u),
 	ld	b, 5 (ix)
 	inc	b
 	inc	b
-;games/flappy_bird.c:109: text_put(row,
+;games/flappy_bird.c:121: text_put(row,
 	push	af
 	inc	sp
 	push	bc
@@ -830,21 +880,21 @@ _text_write_u8_3:
 	call	_text_put
 	pop	af
 	inc	sp
-;games/flappy_bird.c:112: }
+;games/flappy_bird.c:124: }
 	pop	ix
 	ret
-;games/flappy_bird.c:114: static void draw_score(void) {
+;games/flappy_bird.c:126: static void draw_score(void) {
 ;	---------------------------------
 ; Function draw_score
 ; ---------------------------------
 _draw_score:
-;games/flappy_bird.c:115: text_clear_row(0u);
+;games/flappy_bird.c:127: text_clear_row(0u);
 	xor	a, a
 	push	af
 	inc	sp
 	call	_text_clear_row
 	inc	sp
-;games/flappy_bird.c:116: text_write(0u, 0u, "SCORE");
+;games/flappy_bird.c:128: text_write(0u, 0u, "SCORE");
 	ld	hl, #___str_0
 	push	hl
 	xor	a, a
@@ -856,7 +906,7 @@ _draw_score:
 	call	_text_write
 	pop	af
 	pop	af
-;games/flappy_bird.c:117: text_write_u8_3(0u, 6u, score);
+;games/flappy_bird.c:129: text_write_u8_3(0u, 6u, score);
 	ld	a,(#_score + 0)
 	ld	d,a
 	ld	e,#0x06
@@ -867,25 +917,220 @@ _draw_score:
 	call	_text_write_u8_3
 	pop	af
 	inc	sp
-;games/flappy_bird.c:118: }
+;games/flappy_bird.c:130: }
 	ret
 ___str_0:
 	.ascii "SCORE"
 	.db 0x00
-;games/flappy_bird.c:120: static void clear_scene(void) {
+;games/flappy_bird.c:132: static unsigned char cloud_byte(unsigned char x,
+;	---------------------------------
+; Function cloud_byte
+; ---------------------------------
+_cloud_byte:
+	push	ix
+	ld	ix,#0
+	add	ix,sp
+;games/flappy_bird.c:138: if ((x < cloud_x) || (x >= (unsigned char)(cloud_x + 24u))) {
+	ld	a, 4 (ix)
+	sub	a, 6 (ix)
+	jr	C, 00101$
+	ld	a, 6 (ix)
+	add	a, #0x18
+	ld	c, a
+	ld	a, 4 (ix)
+	sub	a, c
+	jr	C, 00102$
+00101$:
+;games/flappy_bird.c:139: return GLIC_BLACK;
+	ld	l, #0x00
+	jr	00108$
+00102$:
+;games/flappy_bird.c:141: local_x = (unsigned char)(x - cloud_x);
+	ld	a, 4 (ix)
+	sub	a, 6 (ix)
+	ld	e, a
+;games/flappy_bird.c:142: if (page == top_page) {
+	ld	a, 5 (ix)
+	sub	a, 7 (ix)
+	jr	NZ, 00105$
+;games/flappy_bird.c:143: return cloud_top[local_x];
+	ld	hl, #_cloud_top+0
+	ld	d, #0x00
+	add	hl, de
+	ld	l, (hl)
+	jr	00108$
+00105$:
+;games/flappy_bird.c:145: if (page == (unsigned char)(top_page + 1u)) {
+	ld	c, 7 (ix)
+	inc	c
+	ld	a, 5 (ix)
+	sub	a, c
+	jr	NZ, 00107$
+;games/flappy_bird.c:146: return cloud_bottom[local_x];
+	ld	hl, #_cloud_bottom+0
+	ld	d, #0x00
+	add	hl, de
+	ld	l, (hl)
+	jr	00108$
+00107$:
+;games/flappy_bird.c:148: return GLIC_BLACK;
+	ld	l, #0x00
+00108$:
+;games/flappy_bird.c:149: }
+	pop	ix
+	ret
+;games/flappy_bird.c:151: static unsigned char background_byte(unsigned char x, unsigned char page) {
+;	---------------------------------
+; Function background_byte
+; ---------------------------------
+_background_byte:
+	push	ix
+	ld	ix,#0
+	add	ix,sp
+;games/flappy_bird.c:154: bits = cloud_byte(x, page, 7u, 2u);
+	ld	de, #0x0207
+	push	de
+	ld	h, 5 (ix)
+	ld	l, 4 (ix)
+	push	hl
+	call	_cloud_byte
+	pop	af
+	pop	af
+;games/flappy_bird.c:155: if (bits != GLIC_BLACK) {
+	ld	a, l
+	or	a, a
+;games/flappy_bird.c:156: return bits;
+	jr	NZ, 00120$
+;games/flappy_bird.c:158: bits = cloud_byte(x, page, 62u, 4u);
+	ld	de, #0x043e
+	push	de
+	ld	h, 5 (ix)
+	ld	l, 4 (ix)
+	push	hl
+	call	_cloud_byte
+	pop	af
+	pop	af
+;games/flappy_bird.c:159: if (bits != GLIC_BLACK) {
+	ld	a, l
+	or	a, a
+;games/flappy_bird.c:160: return bits;
+	jr	NZ, 00120$
+;games/flappy_bird.c:164: if (((x & 31u) == 4u) || ((x & 63u) == 45u)) {
+	ld	e, 4 (ix)
+	ld	a, e
+	and	a, #0x3f
+	ld	c, a
+	ld	b, #0x00
+;games/flappy_bird.c:163: if (page == 1u) {
+	ld	a, 5 (ix)
+	dec	a
+	jr	NZ, 00118$
+;games/flappy_bird.c:164: if (((x & 31u) == 4u) || ((x & 63u) == 45u)) {
+	ld	a, e
+	and	a, #0x1f
+	ld	e, a
+	ld	d, #0x00
+	ld	a, e
+	sub	a, #0x04
+	or	a, d
+	jr	Z, 00105$
+	ld	a, c
+	sub	a, #0x2d
+	or	a, b
+	jr	NZ, 00119$
+00105$:
+;games/flappy_bird.c:165: return 0x08u;
+	ld	l, #0x08
+	jr	00120$
+00118$:
+;games/flappy_bird.c:167: } else if (page == 8u) {
+	ld	a, 5 (ix)
+	sub	a, #0x08
+	jr	NZ, 00115$
+;games/flappy_bird.c:168: if ((x & 63u) == 22u) {
+	ld	a, c
+	sub	a, #0x16
+	or	a, b
+	jr	NZ, 00119$
+;games/flappy_bird.c:169: return 0x20u;
+	ld	l, #0x20
+	jr	00120$
+00115$:
+;games/flappy_bird.c:171: } else if (page == 15u) {
+	ld	a, 5 (ix)
+	sub	a, #0x0f
+	jr	NZ, 00119$
+;games/flappy_bird.c:172: if ((x & 2u) == 0u) {
+	bit	1, 4 (ix)
+	jr	NZ, 00111$
+;games/flappy_bird.c:173: return 0xc0u;
+	ld	l, #0xc0
+	jr	00120$
+00111$:
+;games/flappy_bird.c:175: return 0xa0u;
+	ld	l, #0xa0
+	jr	00120$
+00119$:
+;games/flappy_bird.c:178: return GLIC_BLACK;
+	ld	l, #0x00
+00120$:
+;games/flappy_bird.c:179: }
+	pop	ix
+	ret
+;games/flappy_bird.c:181: static void clear_scene(void) {
 ;	---------------------------------
 ; Function clear_scene
 ; ---------------------------------
 _clear_scene:
-;games/flappy_bird.c:121: glic_fill_graphics(GLIC_BLACK);
-	xor	a, a
+;games/flappy_bird.c:185: for (page = 0u; page < GLIC_SCREEN_PAGES; ++page) {
+	ld	c, #0x00
+;games/flappy_bird.c:186: for (x = 0u; x < GLIC_SCREEN_WIDTH; ++x) {
+00109$:
+	ld	b, #0x00
+00103$:
+;games/flappy_bird.c:187: GLIC_GVRAM[(((unsigned int)page) << 7) + x] =
+	ld	l, c
+	ld	h, #0x00
+	add	hl, hl
+	add	hl, hl
+	add	hl, hl
+	add	hl, hl
+	add	hl, hl
+	add	hl, hl
+	add	hl, hl
+	ld	a, b
+	ld	d, #0x00
+	ld	e, a
+	add	hl, de
+	ld	de, #0x7800
+	add	hl, de
+;games/flappy_bird.c:188: background_byte(x, page);
+	push	hl
+	push	bc
+	ld	a, c
 	push	af
 	inc	sp
-	call	_glic_fill_graphics
+	push	bc
 	inc	sp
-;games/flappy_bird.c:122: }
+	call	_background_byte
+	pop	af
+	ld	a, l
+	pop	bc
+	pop	hl
+	ld	(hl), a
+;games/flappy_bird.c:186: for (x = 0u; x < GLIC_SCREEN_WIDTH; ++x) {
+	inc	b
+	ld	a, b
+	sub	a, #0x80
+	jr	C, 00103$
+;games/flappy_bird.c:185: for (page = 0u; page < GLIC_SCREEN_PAGES; ++page) {
+	inc	c
+	ld	a, c
+	sub	a, #0x10
+	jr	C, 00109$
+;games/flappy_bird.c:191: }
 	ret
-;games/flappy_bird.c:124: static unsigned char pipe_byte(unsigned char pipe_x,
+;games/flappy_bird.c:193: static unsigned char pipe_byte(unsigned char pipe_x,
 ;	---------------------------------
 ; Function pipe_byte
 ; ---------------------------------
@@ -893,7 +1138,7 @@ _pipe_byte:
 	push	ix
 	ld	ix,#0
 	add	ix,sp
-;games/flappy_bird.c:131: if ((page >= 15u) || (x < pipe_x)) {
+;games/flappy_bird.c:200: if ((page >= 15u) || (x < pipe_x)) {
 	ld	a, 7 (ix)
 	sub	a, #0x0f
 	jr	NC, 00101$
@@ -901,48 +1146,83 @@ _pipe_byte:
 	sub	a, 4 (ix)
 	jr	NC, 00102$
 00101$:
-;games/flappy_bird.c:132: return GLIC_BLACK;
-	ld	l, #0x00
-	jr	00109$
+;games/flappy_bird.c:201: return background_byte(x, page);
+	ld	h, 7 (ix)
+	ld	l, 6 (ix)
+	push	hl
+	call	_background_byte
+	pop	af
+	jr	00114$
 00102$:
-;games/flappy_bird.c:135: local_x = (unsigned char)(x - pipe_x);
+;games/flappy_bird.c:204: local_x = (unsigned char)(x - pipe_x);
 	ld	a, 6 (ix)
 	sub	a, 4 (ix)
-;games/flappy_bird.c:136: if (local_x >= PIPE_WIDTH) {
+;games/flappy_bird.c:205: if (local_x >= PIPE_WIDTH) {
+	ld	c, a
 	sub	a, #0x0e
 	jr	C, 00105$
-;games/flappy_bird.c:137: return GLIC_BLACK;
-	ld	l, #0x00
-	jr	00109$
+;games/flappy_bird.c:206: return background_byte(x, page);
+	ld	h, 7 (ix)
+	ld	l, 6 (ix)
+	push	hl
+	call	_background_byte
+	pop	af
+	jr	00114$
 00105$:
-;games/flappy_bird.c:140: gap_end = (unsigned char)(gap_page + PIPE_GAP_PAGES);
+;games/flappy_bird.c:209: gap_end = (unsigned char)(gap_page + PIPE_GAP_PAGES);
 	ld	a, 5 (ix)
-	add	a, #0x05
-	ld	c, a
-;games/flappy_bird.c:141: if ((page >= gap_page) && (page < gap_end)) {
+	add	a, #0x06
+	ld	b, a
+;games/flappy_bird.c:210: if ((page >= gap_page) && (page < gap_end)) {
 	ld	a, 7 (ix)
 	sub	a, 5 (ix)
 	jr	C, 00107$
 	ld	a, 7 (ix)
-	sub	a, c
+	sub	a, b
 	jr	NC, 00107$
-;games/flappy_bird.c:142: return GLIC_BLACK;
-	ld	l, #0x00
-	jr	00109$
+;games/flappy_bird.c:211: return background_byte(x, page);
+	ld	h, 7 (ix)
+	ld	l, 6 (ix)
+	push	hl
+	call	_background_byte
+	pop	af
+	jr	00114$
 00107$:
-;games/flappy_bird.c:145: return pipe_texture[page & 3u];
+;games/flappy_bird.c:214: if ((local_x == 0u) || (local_x == (unsigned char)(PIPE_WIDTH - 1u)) ||
+	ld	a, c
+	or	a, a
+	jr	Z, 00109$
+	ld	a, c
+	sub	a, #0x0d
+	jr	Z, 00109$
+;games/flappy_bird.c:215: (page == (unsigned char)(gap_page - 1u)) || (page == gap_end)) {
+	ld	e, 5 (ix)
+	dec	e
 	ld	a, 7 (ix)
+	sub	a, e
+	jr	Z, 00109$
+	ld	a, 7 (ix)
+	sub	a, b
+	jr	NZ, 00110$
+00109$:
+;games/flappy_bird.c:216: return GLIC_WHITE;
+	ld	l, #0xff
+	jr	00114$
+00110$:
+;games/flappy_bird.c:219: return pipe_texture[(local_x + page) & 3u];
+	ld	a, c
+	add	a, 7 (ix)
 	and	a, #0x03
 	ld	c, a
 	ld	b, #0x00
 	ld	hl, #_pipe_texture
 	add	hl, bc
 	ld	l, (hl)
-00109$:
-;games/flappy_bird.c:146: }
+00114$:
+;games/flappy_bird.c:220: }
 	pop	ix
 	ret
-;games/flappy_bird.c:148: static void restore_scene_region(unsigned char x,
+;games/flappy_bird.c:222: static void restore_scene_region(unsigned char x,
 ;	---------------------------------
 ; Function restore_scene_region
 ; ---------------------------------
@@ -951,7 +1231,7 @@ _restore_scene_region:
 	ld	ix,#0
 	add	ix,sp
 	push	af
-;games/flappy_bird.c:157: while (width != 0u) {
+;games/flappy_bird.c:231: while (width != 0u) {
 	ld	a, 6 (ix)
 	add	a, 7 (ix)
 	ld	-2 (ix), a
@@ -961,19 +1241,19 @@ _restore_scene_region:
 	ld	a, e
 	or	a, a
 	jr	Z, 00109$
-;games/flappy_bird.c:158: if (x < GLIC_SCREEN_WIDTH) {
+;games/flappy_bird.c:232: if (x < GLIC_SCREEN_WIDTH) {
 	ld	a, c
 	sub	a, #0x80
 	jr	NC, 00105$
-;games/flappy_bird.c:159: p = page;
+;games/flappy_bird.c:233: p = page;
 	ld	a, 6 (ix)
 	ld	-1 (ix), a
-;games/flappy_bird.c:160: while (p < (unsigned char)(page + page_count)) {
+;games/flappy_bird.c:234: while (p < (unsigned char)(page + page_count)) {
 00101$:
 	ld	a, -1 (ix)
 	sub	a, -2 (ix)
 	jr	NC, 00105$
-;games/flappy_bird.c:161: offset = (((unsigned int)p) << 7) + x;
+;games/flappy_bird.c:235: offset = (((unsigned int)p) << 7) + x;
 	ld	l, -1 (ix)
 	ld	h, #0x00
 	add	hl, hl
@@ -989,7 +1269,7 @@ _restore_scene_region:
 	ld	l, a
 	ld	a, b
 	adc	a, h
-;games/flappy_bird.c:162: GLIC_GVRAM[offset] = pipe_byte(pipe_x, gap_page, x, p);
+;games/flappy_bird.c:236: GLIC_GVRAM[offset] = pipe_byte(pipe_x, gap_page, x, p);
 	add	a, #0x78
 	ld	h, a
 	push	hl
@@ -1008,21 +1288,21 @@ _restore_scene_region:
 	pop	bc
 	pop	hl
 	ld	(hl), a
-;games/flappy_bird.c:163: ++p;
+;games/flappy_bird.c:237: ++p;
 	inc	-1 (ix)
 	jr	00101$
 00105$:
-;games/flappy_bird.c:166: ++x;
+;games/flappy_bird.c:240: ++x;
 	inc	c
-;games/flappy_bird.c:167: --width;
+;games/flappy_bird.c:241: --width;
 	dec	e
 	jr	00106$
 00109$:
-;games/flappy_bird.c:169: }
+;games/flappy_bird.c:243: }
 	ld	sp, ix
 	pop	ix
 	ret
-;games/flappy_bird.c:171: static void erase_pipe(unsigned char pipe_x) {
+;games/flappy_bird.c:245: static void erase_pipe(unsigned char pipe_x) {
 ;	---------------------------------
 ; Function erase_pipe
 ; ---------------------------------
@@ -1030,172 +1310,20 @@ _erase_pipe:
 	push	ix
 	ld	ix,#0
 	add	ix,sp
-	dec	sp
-;games/flappy_bird.c:176: for (i = 0u; i < PIPE_WIDTH; ++i) {
+;games/flappy_bird.c:250: for (i = 0u; i < PIPE_WIDTH; ++i) {
 	ld	c, #0x00
 00108$:
-;games/flappy_bird.c:177: col = (unsigned char)(pipe_x + i);
+;games/flappy_bird.c:251: col = (unsigned char)(pipe_x + i);
 	ld	a, 4 (ix)
 	add	a, c
-;games/flappy_bird.c:178: if (col >= GLIC_SCREEN_WIDTH) {
-	ld	-1 (ix), a
-	sub	a, #0x80
-	jr	NC, 00104$
-;games/flappy_bird.c:181: for (page = 0u; page < 15u; ++page) {
-	ld	b, #0x00
-00106$:
-;games/flappy_bird.c:182: GLIC_GVRAM[(((unsigned int)page) << 7) + col] = GLIC_BLACK;
-	ld	l, b
-	ld	h, #0x00
-	add	hl, hl
-	add	hl, hl
-	add	hl, hl
-	add	hl, hl
-	add	hl, hl
-	add	hl, hl
-	add	hl, hl
-	ld	e, -1 (ix)
-	ld	d, #0x00
-	add	hl, de
-	ld	de, #0x7800
-	add	hl, de
-	ld	(hl), #0x00
-;games/flappy_bird.c:181: for (page = 0u; page < 15u; ++page) {
-	inc	b
-	ld	a, b
-	sub	a, #0x0f
-	jr	C, 00106$
-00104$:
-;games/flappy_bird.c:176: for (i = 0u; i < PIPE_WIDTH; ++i) {
-	inc	c
-	ld	a, c
-	sub	a, #0x0e
-	jr	C, 00108$
-;games/flappy_bird.c:185: }
-	inc	sp
-	pop	ix
-	ret
-;games/flappy_bird.c:187: static void erase_pipe_column(unsigned char x) {
-;	---------------------------------
-; Function erase_pipe_column
-; ---------------------------------
-_erase_pipe_column:
-	push	ix
-	ld	ix,#0
-	add	ix,sp
-;games/flappy_bird.c:190: if (x >= GLIC_SCREEN_WIDTH) {
-	ld	a, 4 (ix)
-	sub	a, #0x80
-;games/flappy_bird.c:191: return;
-;games/flappy_bird.c:193: for (page = 0u; page < 15u; ++page) {
-	jr	NC, 00106$
-	ld	c, #0x00
-00104$:
-;games/flappy_bird.c:194: GLIC_GVRAM[(((unsigned int)page) << 7) + x] = GLIC_BLACK;
-	ld	l, c
-	ld	h, #0x00
-	add	hl, hl
-	add	hl, hl
-	add	hl, hl
-	add	hl, hl
-	add	hl, hl
-	add	hl, hl
-	add	hl, hl
-	ld	e, 4 (ix)
-	ld	d, #0x00
-	add	hl, de
-	ld	de, #0x7800
-	add	hl, de
-	ld	(hl), #0x00
-;games/flappy_bird.c:193: for (page = 0u; page < 15u; ++page) {
-	inc	c
-	ld	a, c
-	sub	a, #0x0f
-	jr	C, 00104$
-00106$:
-;games/flappy_bird.c:196: }
-	pop	ix
-	ret
-;games/flappy_bird.c:198: static void draw_pipe_column(unsigned char pipe_x,
-;	---------------------------------
-; Function draw_pipe_column
-; ---------------------------------
-_draw_pipe_column:
-	push	ix
-	ld	ix,#0
-	add	ix,sp
-;games/flappy_bird.c:203: if (x >= GLIC_SCREEN_WIDTH) {
-	ld	a, 6 (ix)
-	sub	a, #0x80
-;games/flappy_bird.c:204: return;
-;games/flappy_bird.c:206: for (page = 0u; page < 15u; ++page) {
-	jr	NC, 00106$
-	ld	b, #0x00
-00104$:
-;games/flappy_bird.c:207: GLIC_GVRAM[(((unsigned int)page) << 7) + x] =
-	ld	l, b
-	ld	h, #0x00
-	add	hl, hl
-	add	hl, hl
-	add	hl, hl
-	add	hl, hl
-	add	hl, hl
-	add	hl, hl
-	add	hl, hl
-	ld	e, 6 (ix)
-	ld	d, #0x00
-	add	hl, de
-	ld	de, #0x7800
-	add	hl, de
-;games/flappy_bird.c:208: pipe_byte(pipe_x, gap_page, x, page);
-	push	hl
-	push	bc
-	push	bc
-	inc	sp
-	ld	h, 6 (ix)
-	ld	l, 5 (ix)
-	push	hl
-	ld	a, 4 (ix)
-	push	af
-	inc	sp
-	call	_pipe_byte
-	pop	af
-	pop	af
-	ld	a, l
-	pop	bc
-	pop	hl
-	ld	(hl), a
-;games/flappy_bird.c:206: for (page = 0u; page < 15u; ++page) {
-	inc	b
-	ld	a, b
-	sub	a, #0x0f
-	jr	C, 00104$
-00106$:
-;games/flappy_bird.c:210: }
-	pop	ix
-	ret
-;games/flappy_bird.c:212: static void draw_pipe(unsigned char pipe_x, unsigned char gap_page) {
-;	---------------------------------
-; Function draw_pipe
-; ---------------------------------
-_draw_pipe:
-	push	ix
-	ld	ix,#0
-	add	ix,sp
-;games/flappy_bird.c:217: for (i = 0u; i < PIPE_WIDTH; ++i) {
-	ld	c, #0x00
-00108$:
-;games/flappy_bird.c:218: col = (unsigned char)(pipe_x + i);
-	ld	a, 4 (ix)
-	add	a, c
-;games/flappy_bird.c:219: if (col >= GLIC_SCREEN_WIDTH) {
+;games/flappy_bird.c:252: if (col >= GLIC_SCREEN_WIDTH) {
 	ld	b, a
 	sub	a, #0x80
 	jr	NC, 00104$
-;games/flappy_bird.c:222: for (page = 0u; page < 15u; ++page) {
+;games/flappy_bird.c:255: for (page = 0u; page < 15u; ++page) {
 	ld	e, #0x00
 00106$:
-;games/flappy_bird.c:223: GLIC_GVRAM[(((unsigned int)page) << 7) + col] =
+;games/flappy_bird.c:256: GLIC_GVRAM[(((unsigned int)page) << 7) + col] =
 	ld	l, e
 	ld	h, #0x00
 	add	hl, hl
@@ -1213,7 +1341,188 @@ _draw_pipe:
 	adc	a, h
 	add	a, #0x78
 	ld	h, a
-;games/flappy_bird.c:224: pipe_byte(pipe_x, gap_page, col, page);
+;games/flappy_bird.c:257: background_byte(col, page);
+	push	hl
+	push	bc
+	push	de
+	ld	a, e
+	push	af
+	inc	sp
+	push	bc
+	inc	sp
+	call	_background_byte
+	pop	af
+	ld	a, l
+	pop	de
+	pop	bc
+	pop	hl
+	ld	(hl), a
+;games/flappy_bird.c:255: for (page = 0u; page < 15u; ++page) {
+	inc	e
+	ld	a, e
+	sub	a, #0x0f
+	jr	C, 00106$
+00104$:
+;games/flappy_bird.c:250: for (i = 0u; i < PIPE_WIDTH; ++i) {
+	inc	c
+	ld	a, c
+	sub	a, #0x0e
+	jr	C, 00108$
+;games/flappy_bird.c:260: }
+	pop	ix
+	ret
+;games/flappy_bird.c:262: static void erase_pipe_column(unsigned char x) {
+;	---------------------------------
+; Function erase_pipe_column
+; ---------------------------------
+_erase_pipe_column:
+	push	ix
+	ld	ix,#0
+	add	ix,sp
+;games/flappy_bird.c:265: if (x >= GLIC_SCREEN_WIDTH) {
+	ld	a, 4 (ix)
+	sub	a, #0x80
+;games/flappy_bird.c:266: return;
+;games/flappy_bird.c:268: for (page = 0u; page < 15u; ++page) {
+	jr	NC, 00106$
+	ld	b, #0x00
+00104$:
+;games/flappy_bird.c:269: GLIC_GVRAM[(((unsigned int)page) << 7) + x] =
+	ld	l, b
+	ld	h, #0x00
+	add	hl, hl
+	add	hl, hl
+	add	hl, hl
+	add	hl, hl
+	add	hl, hl
+	add	hl, hl
+	add	hl, hl
+	ld	e, 4 (ix)
+	ld	d, #0x00
+	add	hl, de
+	ld	de, #0x7800
+	add	hl, de
+;games/flappy_bird.c:270: background_byte(x, page);
+	push	hl
+	push	bc
+	push	bc
+	inc	sp
+	ld	a, 4 (ix)
+	push	af
+	inc	sp
+	call	_background_byte
+	pop	af
+	ld	a, l
+	pop	bc
+	pop	hl
+	ld	(hl), a
+;games/flappy_bird.c:268: for (page = 0u; page < 15u; ++page) {
+	inc	b
+	ld	a, b
+	sub	a, #0x0f
+	jr	C, 00104$
+00106$:
+;games/flappy_bird.c:272: }
+	pop	ix
+	ret
+;games/flappy_bird.c:274: static void draw_pipe_column(unsigned char pipe_x,
+;	---------------------------------
+; Function draw_pipe_column
+; ---------------------------------
+_draw_pipe_column:
+	push	ix
+	ld	ix,#0
+	add	ix,sp
+;games/flappy_bird.c:279: if (x >= GLIC_SCREEN_WIDTH) {
+	ld	a, 6 (ix)
+	sub	a, #0x80
+;games/flappy_bird.c:280: return;
+;games/flappy_bird.c:282: for (page = 0u; page < 15u; ++page) {
+	jr	NC, 00106$
+	ld	b, #0x00
+00104$:
+;games/flappy_bird.c:283: GLIC_GVRAM[(((unsigned int)page) << 7) + x] =
+	ld	l, b
+	ld	h, #0x00
+	add	hl, hl
+	add	hl, hl
+	add	hl, hl
+	add	hl, hl
+	add	hl, hl
+	add	hl, hl
+	add	hl, hl
+	ld	e, 6 (ix)
+	ld	d, #0x00
+	add	hl, de
+	ld	de, #0x7800
+	add	hl, de
+;games/flappy_bird.c:284: pipe_byte(pipe_x, gap_page, x, page);
+	push	hl
+	push	bc
+	push	bc
+	inc	sp
+	ld	h, 6 (ix)
+	ld	l, 5 (ix)
+	push	hl
+	ld	a, 4 (ix)
+	push	af
+	inc	sp
+	call	_pipe_byte
+	pop	af
+	pop	af
+	ld	a, l
+	pop	bc
+	pop	hl
+	ld	(hl), a
+;games/flappy_bird.c:282: for (page = 0u; page < 15u; ++page) {
+	inc	b
+	ld	a, b
+	sub	a, #0x0f
+	jr	C, 00104$
+00106$:
+;games/flappy_bird.c:286: }
+	pop	ix
+	ret
+;games/flappy_bird.c:288: static void draw_pipe(unsigned char pipe_x, unsigned char gap_page) {
+;	---------------------------------
+; Function draw_pipe
+; ---------------------------------
+_draw_pipe:
+	push	ix
+	ld	ix,#0
+	add	ix,sp
+;games/flappy_bird.c:293: for (i = 0u; i < PIPE_WIDTH; ++i) {
+	ld	c, #0x00
+00108$:
+;games/flappy_bird.c:294: col = (unsigned char)(pipe_x + i);
+	ld	a, 4 (ix)
+	add	a, c
+;games/flappy_bird.c:295: if (col >= GLIC_SCREEN_WIDTH) {
+	ld	b, a
+	sub	a, #0x80
+	jr	NC, 00104$
+;games/flappy_bird.c:298: for (page = 0u; page < 15u; ++page) {
+	ld	e, #0x00
+00106$:
+;games/flappy_bird.c:299: GLIC_GVRAM[(((unsigned int)page) << 7) + col] =
+	ld	l, e
+	ld	h, #0x00
+	add	hl, hl
+	add	hl, hl
+	add	hl, hl
+	add	hl, hl
+	add	hl, hl
+	add	hl, hl
+	add	hl, hl
+	ld	a, b
+	ld	d, #0x00
+	add	a, l
+	ld	l, a
+	ld	a, d
+	adc	a, h
+	add	a, #0x78
+	ld	h, a
+;games/flappy_bird.c:300: pipe_byte(pipe_x, gap_page, col, page);
 	push	hl
 	push	bc
 	push	de
@@ -1233,40 +1542,40 @@ _draw_pipe:
 	pop	bc
 	pop	hl
 	ld	(hl), a
-;games/flappy_bird.c:222: for (page = 0u; page < 15u; ++page) {
+;games/flappy_bird.c:298: for (page = 0u; page < 15u; ++page) {
 	inc	e
 	ld	a, e
 	sub	a, #0x0f
 	jr	C, 00106$
 00104$:
-;games/flappy_bird.c:217: for (i = 0u; i < PIPE_WIDTH; ++i) {
+;games/flappy_bird.c:293: for (i = 0u; i < PIPE_WIDTH; ++i) {
 	inc	c
 	ld	a, c
 	sub	a, #0x0e
 	jr	C, 00108$
-;games/flappy_bird.c:227: }
+;games/flappy_bird.c:303: }
 	pop	ix
 	ret
-;games/flappy_bird.c:229: static void move_pipe_left(unsigned char old_pipe_x,
+;games/flappy_bird.c:305: static void move_pipe_left(unsigned char old_pipe_x,
 ;	---------------------------------
 ; Function move_pipe_left
 ; ---------------------------------
 _move_pipe_left:
-;games/flappy_bird.c:234: old_right = (unsigned char)(old_pipe_x + PIPE_WIDTH - 1u);
+;games/flappy_bird.c:310: old_right = (unsigned char)(old_pipe_x + PIPE_WIDTH - 1u);
 	ld	hl, #2
 	add	hl, sp
 	ld	a, (hl)
 	add	a, #0x0d
-;games/flappy_bird.c:235: if (old_right < GLIC_SCREEN_WIDTH) {
+;games/flappy_bird.c:311: if (old_right < GLIC_SCREEN_WIDTH) {
 	cp	a, #0x80
 	jr	NC, 00102$
-;games/flappy_bird.c:236: erase_pipe_column(old_right);
+;games/flappy_bird.c:312: erase_pipe_column(old_right);
 	push	af
 	inc	sp
 	call	_erase_pipe_column
 	inc	sp
 00102$:
-;games/flappy_bird.c:238: draw_pipe_column(pipe_x, gap_page, pipe_x);
+;games/flappy_bird.c:314: draw_pipe_column(pipe_x, gap_page, pipe_x);
 	ld	iy, #3
 	add	iy, sp
 	ld	a, 0 (iy)
@@ -1282,21 +1591,21 @@ _move_pipe_left:
 	call	_draw_pipe_column
 	pop	af
 	inc	sp
-;games/flappy_bird.c:239: }
+;games/flappy_bird.c:315: }
 	ret
-;games/flappy_bird.c:241: static void erase_bird(unsigned char bird_y,
+;games/flappy_bird.c:317: static void erase_bird(unsigned char bird_y,
 ;	---------------------------------
 ; Function erase_bird
 ; ---------------------------------
 _erase_bird:
-;games/flappy_bird.c:247: page = bird_y >> 3;
+;games/flappy_bird.c:323: page = bird_y >> 3;
 	ld	iy, #2
 	add	iy, sp
 	ld	b, 0 (iy)
 	srl	b
 	srl	b
 	srl	b
-;games/flappy_bird.c:248: last_page = (unsigned char)((bird_y + 7u) >> 3);
+;games/flappy_bird.c:324: last_page = (unsigned char)((bird_y + 7u) >> 3);
 	ld	e, 0 (iy)
 	ld	d, #0x00
 	ld	hl, #0x0007
@@ -1308,10 +1617,10 @@ _erase_bird:
 	srl	h
 	rr	l
 	ld	a, l
-;games/flappy_bird.c:252: (unsigned char)(last_page - page + 1u),
+;games/flappy_bird.c:328: (unsigned char)(last_page - page + 1u),
 	sub	a, b
 	inc	a
-;games/flappy_bird.c:249: restore_scene_region(BIRD_X,
+;games/flappy_bird.c:325: restore_scene_region(BIRD_X,
 	ld	h, 2 (iy)
 	inc	iy
 	inc	iy
@@ -1330,19 +1639,19 @@ _erase_bird:
 	ld	hl, #6
 	add	hl, sp
 	ld	sp, hl
-;games/flappy_bird.c:255: }
+;games/flappy_bird.c:331: }
 	ret
-;games/flappy_bird.c:257: static void draw_bird(unsigned char bird_y, unsigned char frame) {
+;games/flappy_bird.c:333: static void draw_bird(unsigned char bird_y, unsigned char frame) {
 ;	---------------------------------
 ; Function draw_bird
 ; ---------------------------------
 _draw_bird:
-;games/flappy_bird.c:258: if ((frame & 4u) == 0u) {
+;games/flappy_bird.c:334: if ((frame & 4u) == 0u) {
 	ld	hl, #3
 	add	hl, sp
 	bit	2, (hl)
 	jr	NZ, 00102$
-;games/flappy_bird.c:259: glic_draw_bitmap8(BIRD_X, bird_y, bird_wing_up);
+;games/flappy_bird.c:335: glic_draw_bitmap8(BIRD_X, bird_y, bird_wing_up);
 	ld	hl, #_bird_wing_up
 	push	hl
 	ld	hl, #4
@@ -1355,7 +1664,7 @@ _draw_bird:
 	pop	af
 	ret
 00102$:
-;games/flappy_bird.c:261: glic_draw_bitmap8(BIRD_X, bird_y, bird_wing_down);
+;games/flappy_bird.c:337: glic_draw_bitmap8(BIRD_X, bird_y, bird_wing_down);
 	ld	hl, #_bird_wing_down
 	push	hl
 	ld	hl, #4
@@ -1366,9 +1675,9 @@ _draw_bird:
 	call	_glic_draw_bitmap8
 	pop	af
 	pop	af
-;games/flappy_bird.c:263: }
+;games/flappy_bird.c:339: }
 	ret
-;games/flappy_bird.c:265: static unsigned char bird_hits_pipe(unsigned char pipe_x,
+;games/flappy_bird.c:341: static unsigned char bird_hits_pipe(unsigned char pipe_x,
 ;	---------------------------------
 ; Function bird_hits_pipe
 ; ---------------------------------
@@ -1376,11 +1685,11 @@ _bird_hits_pipe:
 	push	ix
 	ld	ix,#0
 	add	ix,sp
-;games/flappy_bird.c:272: pipe_right = (unsigned char)(pipe_x + PIPE_WIDTH - 1u);
+;games/flappy_bird.c:348: pipe_right = (unsigned char)(pipe_x + PIPE_WIDTH - 1u);
 	ld	a, 4 (ix)
 	add	a, #0x0d
 	ld	c, a
-;games/flappy_bird.c:273: if (((unsigned char)(BIRD_X + 7u) < pipe_x) || (BIRD_X > pipe_right)) {
+;games/flappy_bird.c:349: if (((unsigned char)(BIRD_X + 7u) < pipe_x) || (BIRD_X > pipe_right)) {
 	ld	a, #0x1f
 	sub	a, 4 (ix)
 	jr	C, 00101$
@@ -1388,16 +1697,16 @@ _bird_hits_pipe:
 	sub	a, #0x18
 	jr	NC, 00102$
 00101$:
-;games/flappy_bird.c:274: return 0u;
+;games/flappy_bird.c:350: return 0u;
 	ld	l, #0x00
 	jr	00107$
 00102$:
-;games/flappy_bird.c:277: bird_top_page = bird_y >> 3;
+;games/flappy_bird.c:353: bird_top_page = bird_y >> 3;
 	ld	c, 6 (ix)
 	srl	c
 	srl	c
 	srl	c
-;games/flappy_bird.c:278: bird_bottom_page = (unsigned char)((bird_y + 7u) >> 3);
+;games/flappy_bird.c:354: bird_bottom_page = (unsigned char)((bird_y + 7u) >> 3);
 	ld	e, 6 (ix)
 	ld	d, #0x00
 	ld	hl, #0x0007
@@ -1408,34 +1717,34 @@ _bird_hits_pipe:
 	rr	l
 	srl	h
 	rr	l
-;games/flappy_bird.c:279: if ((bird_top_page < gap_page) ||
+;games/flappy_bird.c:355: if ((bird_top_page < gap_page) ||
 	ld	a, c
 	sub	a, 5 (ix)
 	jr	C, 00104$
-;games/flappy_bird.c:280: (bird_bottom_page >= (unsigned char)(gap_page + PIPE_GAP_PAGES))) {
+;games/flappy_bird.c:356: (bird_bottom_page >= (unsigned char)(gap_page + PIPE_GAP_PAGES))) {
 	ld	a, 5 (ix)
-	add	a, #0x05
+	add	a, #0x06
 	ld	c, a
 	ld	a, l
 	sub	a, c
 	jr	C, 00105$
 00104$:
-;games/flappy_bird.c:281: return 1u;
+;games/flappy_bird.c:357: return 1u;
 	ld	l, #0x01
 	jr	00107$
 00105$:
-;games/flappy_bird.c:284: return 0u;
+;games/flappy_bird.c:360: return 0u;
 	ld	l, #0x00
 00107$:
-;games/flappy_bird.c:285: }
+;games/flappy_bird.c:361: }
 	pop	ix
 	ret
-;games/flappy_bird.c:287: static void draw_crash(unsigned char bird_y) {
+;games/flappy_bird.c:363: static void draw_crash(unsigned char bird_y) {
 ;	---------------------------------
 ; Function draw_crash
 ; ---------------------------------
 _draw_crash:
-;games/flappy_bird.c:290: glic_draw_bitmap8(BIRD_X, bird_y, bird_crash);
+;games/flappy_bird.c:366: glic_draw_bitmap8(BIRD_X, bird_y, bird_crash);
 	ld	hl, #_bird_crash
 	push	hl
 	ld	hl, #4
@@ -1446,10 +1755,10 @@ _draw_crash:
 	call	_glic_draw_bitmap8
 	pop	af
 	pop	af
-;games/flappy_bird.c:291: for (i = 0u; i < GLIC_SCREEN_WIDTH; ++i) {
+;games/flappy_bird.c:367: for (i = 0u; i < GLIC_SCREEN_WIDTH; ++i) {
 	ld	b, #0x00
 00102$:
-;games/flappy_bird.c:292: glic_plot(i, i, 1u);
+;games/flappy_bird.c:368: glic_plot(i, i, 1u);
 	push	bc
 	ld	a, #0x01
 	push	af
@@ -1460,7 +1769,7 @@ _draw_crash:
 	pop	af
 	inc	sp
 	pop	bc
-;games/flappy_bird.c:293: glic_plot((unsigned char)(127u - i), i, 1u);
+;games/flappy_bird.c:369: glic_plot((unsigned char)(127u - i), i, 1u);
 	ld	a, #0x7f
 	sub	a, b
 	push	bc
@@ -1473,57 +1782,55 @@ _draw_crash:
 	pop	af
 	inc	sp
 	pop	bc
-;games/flappy_bird.c:291: for (i = 0u; i < GLIC_SCREEN_WIDTH; ++i) {
+;games/flappy_bird.c:367: for (i = 0u; i < GLIC_SCREEN_WIDTH; ++i) {
 	inc	b
 	ld	a, b
 	sub	a, #0x80
 	jr	C, 00102$
-;games/flappy_bird.c:295: }
+;games/flappy_bird.c:371: }
 	ret
-;games/flappy_bird.c:297: static void draw_title_screen(void) {
+;games/flappy_bird.c:373: static void draw_title_screen(void) {
 ;	---------------------------------
 ; Function draw_title_screen
 ; ---------------------------------
 _draw_title_screen:
-;games/flappy_bird.c:298: glic_prepare_screen(GLIC_BLACK);
-	xor	a, a
-	push	af
-	inc	sp
-	call	_glic_prepare_screen
-	inc	sp
-;games/flappy_bird.c:299: draw_pipe(96u, 5u);
+;games/flappy_bird.c:374: glic_clear_text();
+	call	_glic_clear_text
+;games/flappy_bird.c:375: clear_scene();
+	call	_clear_scene
+;games/flappy_bird.c:376: draw_pipe(96u, 5u);
 	ld	de, #0x0560
 	push	de
 	call	_draw_pipe
 	pop	af
-;games/flappy_bird.c:300: draw_bird(56u, 0u);
+;games/flappy_bird.c:377: draw_bird(56u, 0u);
 	xor	a, a
 	ld	d,a
 	ld	e,#0x38
 	push	de
 	call	_draw_bird
-;games/flappy_bird.c:301: text_write(2u, 2u, "FLAPPY BIRD");
+;games/flappy_bird.c:378: text_write(2u, 2u, "FLAPPY BIRD");
 	ld	hl, #___str_1
 	ex	(sp),hl
 	ld	de, #0x0202
 	push	de
 	call	_text_write
 	pop	af
-;games/flappy_bird.c:302: text_write(5u, 1u, "FLAP TO START");
+;games/flappy_bird.c:379: text_write(5u, 1u, "FLAP TO START");
 	ld	hl, #___str_2
 	ex	(sp),hl
 	ld	de, #0x0105
 	push	de
 	call	_text_write
 	pop	af
-;games/flappy_bird.c:303: text_write(7u, 2u, "UP/A FLAP");
+;games/flappy_bird.c:380: text_write(7u, 2u, "UP/A FLAP");
 	ld	hl, #___str_3
 	ex	(sp),hl
 	ld	de, #0x0207
 	push	de
 	call	_text_write
 	pop	af
-;games/flappy_bird.c:304: text_write(11u, 2u, "DODGE PIPES");
+;games/flappy_bird.c:381: text_write(11u, 2u, "DODGE PIPES");
 	ld	hl, #___str_4
 	ex	(sp),hl
 	ld	de, #0x020b
@@ -1531,7 +1838,7 @@ _draw_title_screen:
 	call	_text_write
 	pop	af
 	pop	af
-;games/flappy_bird.c:305: }
+;games/flappy_bird.c:382: }
 	ret
 ___str_1:
 	.ascii "FLAPPY BIRD"
@@ -1545,55 +1852,55 @@ ___str_3:
 ___str_4:
 	.ascii "DODGE PIPES"
 	.db 0x00
-;games/flappy_bird.c:307: static void draw_game_over_text(void) {
+;games/flappy_bird.c:384: static void draw_game_over_text(void) {
 ;	---------------------------------
 ; Function draw_game_over_text
 ; ---------------------------------
 _draw_game_over_text:
-;games/flappy_bird.c:308: text_clear_row(0u);
+;games/flappy_bird.c:385: text_clear_row(0u);
 	xor	a, a
 	push	af
 	inc	sp
 	call	_text_clear_row
 	inc	sp
-;games/flappy_bird.c:309: text_clear_row(5u);
+;games/flappy_bird.c:386: text_clear_row(5u);
 	ld	a, #0x05
 	push	af
 	inc	sp
 	call	_text_clear_row
 	inc	sp
-;games/flappy_bird.c:310: text_clear_row(6u);
+;games/flappy_bird.c:387: text_clear_row(6u);
 	ld	a, #0x06
 	push	af
 	inc	sp
 	call	_text_clear_row
 	inc	sp
-;games/flappy_bird.c:311: text_clear_row(7u);
+;games/flappy_bird.c:388: text_clear_row(7u);
 	ld	a, #0x07
 	push	af
 	inc	sp
 	call	_text_clear_row
 	inc	sp
-;games/flappy_bird.c:312: text_clear_row(8u);
+;games/flappy_bird.c:389: text_clear_row(8u);
 	ld	a, #0x08
 	push	af
 	inc	sp
 	call	_text_clear_row
 	inc	sp
-;games/flappy_bird.c:313: text_clear_row(10u);
+;games/flappy_bird.c:390: text_clear_row(10u);
 	ld	a, #0x0a
 	push	af
 	inc	sp
 	call	_text_clear_row
 	inc	sp
-;games/flappy_bird.c:314: text_write(5u, 3u, "GAME OVER");
+;games/flappy_bird.c:391: text_write(5u, 3u, "GAME OVER");
 	ld	hl, #___str_5
 	push	hl
 	ld	de, #0x0305
 	push	de
 	call	_text_write
 	pop	af
-;games/flappy_bird.c:315: text_write(7u, 4u, "SCORE");
+;games/flappy_bird.c:392: text_write(7u, 4u, "SCORE");
 	ld	hl, #___str_6
 	ex	(sp),hl
 	ld	de, #0x0407
@@ -1601,7 +1908,7 @@ _draw_game_over_text:
 	call	_text_write
 	pop	af
 	pop	af
-;games/flappy_bird.c:316: text_write_u8_3(7u, 10u, score);
+;games/flappy_bird.c:393: text_write_u8_3(7u, 10u, score);
 	ld	a,(#_score + 0)
 	ld	d,a
 	ld	e,#0x0a
@@ -1610,7 +1917,7 @@ _draw_game_over_text:
 	push	af
 	inc	sp
 	call	_text_write_u8_3
-;games/flappy_bird.c:317: text_write(10u, 3u, "FLAP MENU");
+;games/flappy_bird.c:394: text_write(10u, 3u, "FLAP MENU");
 	inc	sp
 	ld	hl,#___str_7
 	ex	(sp),hl
@@ -1619,7 +1926,7 @@ _draw_game_over_text:
 	call	_text_write
 	pop	af
 	pop	af
-;games/flappy_bird.c:318: }
+;games/flappy_bird.c:395: }
 	ret
 ___str_5:
 	.ascii "GAME OVER"
@@ -1630,7 +1937,7 @@ ___str_6:
 ___str_7:
 	.ascii "FLAP MENU"
 	.db 0x00
-;games/flappy_bird.c:320: void main(void) {
+;games/flappy_bird.c:397: void main(void) {
 ;	---------------------------------
 ; Function main
 ; ---------------------------------
@@ -1641,70 +1948,70 @@ _main::
 	ld	hl, #-12
 	add	hl, sp
 	ld	sp, hl
-;games/flappy_bird.c:336: glic_clear_text();
+;games/flappy_bird.c:413: glic_clear_text();
 	call	_glic_clear_text
-;games/flappy_bird.c:337: rng_state = 0x5au;
+;games/flappy_bird.c:414: rng_state = 0x5au;
 	ld	hl, #_rng_state
 	ld	(hl), #0x5a
-;games/flappy_bird.c:339: while (1) {
+;games/flappy_bird.c:416: while (1) {
 00134$:
-;games/flappy_bird.c:340: draw_title_screen();
+;games/flappy_bird.c:417: draw_title_screen();
 	call	_draw_title_screen
-;games/flappy_bird.c:341: wait_for_flap_press();
+;games/flappy_bird.c:418: wait_for_flap_press();
 	call	_wait_for_flap_press
-;games/flappy_bird.c:342: clear_scene();
+;games/flappy_bird.c:419: clear_scene();
 	call	_clear_scene
-;games/flappy_bird.c:343: glic_clear_text();
+;games/flappy_bird.c:420: glic_clear_text();
 	call	_glic_clear_text
-;games/flappy_bird.c:344: bird_y = 56u;
+;games/flappy_bird.c:421: bird_y = 56u;
 	ld	-4 (ix), #0x38
-;games/flappy_bird.c:345: velocity = 0;
+;games/flappy_bird.c:422: velocity = 0;
 	ld	-3 (ix), #0
-;games/flappy_bird.c:346: pipe_x = 112u;
+;games/flappy_bird.c:423: pipe_x = 112u;
 	ld	-2 (ix), #0x70
-;games/flappy_bird.c:347: gap_page = 5u;
+;games/flappy_bird.c:424: gap_page = 5u;
 	ld	-12 (ix), #0x05
-;games/flappy_bird.c:348: pipe_scored = 0u;
+;games/flappy_bird.c:425: pipe_scored = 0u;
 	ld	-11 (ix), #0
-;games/flappy_bird.c:349: score = 0u;
+;games/flappy_bird.c:426: score = 0u;
 	ld	hl, #_score
 	ld	(hl), #0x00
-;games/flappy_bird.c:351: last_buttons = GLIC_BUTTONS_NONE;
+;games/flappy_bird.c:428: last_buttons = GLIC_BUTTONS_NONE;
 	ld	-10 (ix), #0xff
-;games/flappy_bird.c:352: game_over = 0u;
+;games/flappy_bird.c:429: game_over = 0u;
 	ld	-9 (ix), #0
-;games/flappy_bird.c:353: draw_pipe(pipe_x, gap_page);
+;games/flappy_bird.c:430: draw_pipe(pipe_x, gap_page);
 	ld	de, #0x0570
 	push	de
 	call	_draw_pipe
 	pop	af
-;games/flappy_bird.c:354: draw_bird(bird_y, frame);
+;games/flappy_bird.c:431: draw_bird(bird_y, frame);
 	xor	a, a
 	ld	d,a
 	ld	e,#0x38
 	push	de
 	call	_draw_bird
 	pop	af
-;games/flappy_bird.c:355: draw_score();
+;games/flappy_bird.c:432: draw_score();
 	call	_draw_score
-;games/flappy_bird.c:357: while (game_over == 0u) {
+;games/flappy_bird.c:434: while (game_over == 0u) {
 	ld	-1 (ix), #0
 00130$:
 	ld	a, -9 (ix)
 	or	a, a
 	jp	NZ, 00132$
-;games/flappy_bird.c:358: old_bird_y = bird_y;
+;games/flappy_bird.c:435: old_bird_y = bird_y;
 	ld	a, -4 (ix)
 	ld	-8 (ix), a
-;games/flappy_bird.c:359: old_pipe_x = pipe_x;
+;games/flappy_bird.c:436: old_pipe_x = pipe_x;
 	ld	a, -2 (ix)
 	ld	-7 (ix), a
-;games/flappy_bird.c:360: old_gap_page = gap_page;
+;games/flappy_bird.c:437: old_gap_page = gap_page;
 	ld	a, -12 (ix)
 	ld	-6 (ix), a
-;games/flappy_bird.c:361: buttons = glic_read_buttons();
+;games/flappy_bird.c:438: buttons = glic_read_buttons();
 	call	_glic_read_buttons
-;games/flappy_bird.c:362: if ((flap_pressed(last_buttons) == 0u) &&
+;games/flappy_bird.c:439: if ((flap_pressed(last_buttons) == 0u) &&
 	push	hl
 	ld	a, -10 (ix)
 	push	af
@@ -1715,7 +2022,7 @@ _main::
 	pop	hl
 	or	a, a
 	jr	NZ, 00104$
-;games/flappy_bird.c:363: (flap_pressed(buttons) != 0u)) {
+;games/flappy_bird.c:440: (flap_pressed(buttons) != 0u)) {
 	push	hl
 	ld	a, l
 	push	af
@@ -1726,21 +2033,21 @@ _main::
 	pop	hl
 	or	a, a
 	jr	Z, 00104$
-;games/flappy_bird.c:364: velocity = -5;
+;games/flappy_bird.c:441: velocity = -5;
 	ld	-3 (ix), #0xfb
 	jr	00105$
 00104$:
-;games/flappy_bird.c:365: } else if (velocity < 4) {
+;games/flappy_bird.c:442: } else if (velocity < 4) {
 	ld	a, -3 (ix)
 	xor	a, #0x80
 	sub	a, #0x84
 	jr	NC, 00105$
-;games/flappy_bird.c:366: ++velocity;
+;games/flappy_bird.c:443: ++velocity;
 	inc	-3 (ix)
 00105$:
-;games/flappy_bird.c:368: last_buttons = buttons;
+;games/flappy_bird.c:445: last_buttons = buttons;
 	ld	-10 (ix), l
-;games/flappy_bird.c:370: next_y = (signed int)bird_y + (signed int)velocity;
+;games/flappy_bird.c:447: next_y = (signed int)bird_y + (signed int)velocity;
 	ld	c, -4 (ix)
 	ld	b, #0x00
 	ld	a, -3 (ix)
@@ -1751,16 +2058,16 @@ _main::
 	add	hl, bc
 	ld	-5 (ix), l
 	ld	-4 (ix), h
-;games/flappy_bird.c:371: if (next_y < 0) {
+;games/flappy_bird.c:448: if (next_y < 0) {
 	bit	7, -4 (ix)
 	jr	Z, 00111$
-;games/flappy_bird.c:372: bird_y = 0u;
+;games/flappy_bird.c:449: bird_y = 0u;
 	ld	-4 (ix), #0
-;games/flappy_bird.c:373: game_over = 1u;
+;games/flappy_bird.c:450: game_over = 1u;
 	ld	-9 (ix), #0x01
 	jr	00112$
 00111$:
-;games/flappy_bird.c:374: } else if (next_y > 119) {
+;games/flappy_bird.c:451: } else if (next_y > 119) {
 	ld	a, #0x77
 	cp	a, -5 (ix)
 	ld	a, #0x00
@@ -1769,68 +2076,68 @@ _main::
 	xor	a, #0x80
 00219$:
 	jp	P, 00108$
-;games/flappy_bird.c:375: bird_y = 119u;
+;games/flappy_bird.c:452: bird_y = 119u;
 	ld	-4 (ix), #0x77
-;games/flappy_bird.c:376: game_over = 1u;
+;games/flappy_bird.c:453: game_over = 1u;
 	ld	-9 (ix), #0x01
 	jr	00112$
 00108$:
-;games/flappy_bird.c:378: bird_y = (unsigned char)next_y;
+;games/flappy_bird.c:455: bird_y = (unsigned char)next_y;
 	ld	a, -5 (ix)
 	ld	-4 (ix), a
 00112$:
-;games/flappy_bird.c:381: if (pipe_x == 0u) {
+;games/flappy_bird.c:458: if (pipe_x == 0u) {
 	ld	a, -2 (ix)
 	or	a, a
 	jr	NZ, 00116$
-;games/flappy_bird.c:382: pipe_x = 127u;
+;games/flappy_bird.c:459: pipe_x = 127u;
 	ld	-2 (ix), #0x7f
-;games/flappy_bird.c:383: gap_page = (unsigned char)(2u + (random8() & 7u));
+;games/flappy_bird.c:460: gap_page = (unsigned char)(2u + (random8() & 7u));
 	call	_random8
 	ld	-5 (ix), l
 	ld	a, l
 	and	a, #0x07
 	add	a, #0x02
 	ld	-12 (ix), a
-;games/flappy_bird.c:384: if (gap_page > 9u) {
-	ld	a, #0x09
+;games/flappy_bird.c:461: if (gap_page > 8u) {
+	ld	a, #0x08
 	sub	a, -12 (ix)
 	jr	NC, 00114$
-;games/flappy_bird.c:385: gap_page = 9u;
-	ld	-12 (ix), #0x09
+;games/flappy_bird.c:462: gap_page = 8u;
+	ld	-12 (ix), #0x08
 00114$:
-;games/flappy_bird.c:387: pipe_scored = 0u;
+;games/flappy_bird.c:464: pipe_scored = 0u;
 	ld	-11 (ix), #0
 	jr	00117$
 00116$:
-;games/flappy_bird.c:389: --pipe_x;
+;games/flappy_bird.c:466: --pipe_x;
 	dec	-2 (ix)
 00117$:
-;games/flappy_bird.c:392: pipe_right = (unsigned char)(pipe_x + PIPE_WIDTH - 1u);
+;games/flappy_bird.c:469: pipe_right = (unsigned char)(pipe_x + PIPE_WIDTH - 1u);
 	ld	a, -2 (ix)
 	add	a, #0x0d
 	ld	c, a
-;games/flappy_bird.c:393: if ((pipe_scored == 0u) && (pipe_right < BIRD_X)) {
+;games/flappy_bird.c:470: if ((pipe_scored == 0u) && (pipe_right < BIRD_X)) {
 	ld	a, -11 (ix)
 	or	a, a
 	jr	NZ, 00121$
 	ld	a, c
 	sub	a, #0x18
 	jr	NC, 00121$
-;games/flappy_bird.c:394: if (score < 255u) {
+;games/flappy_bird.c:471: if (score < 255u) {
 	ld	iy, #_score
 	ld	a, 0 (iy)
 	sub	a, #0xff
 	jr	NC, 00119$
-;games/flappy_bird.c:395: ++score;
+;games/flappy_bird.c:472: ++score;
 	inc	0 (iy)
 00119$:
-;games/flappy_bird.c:397: draw_score();
+;games/flappy_bird.c:474: draw_score();
 	call	_draw_score
-;games/flappy_bird.c:398: pipe_scored = 1u;
+;games/flappy_bird.c:475: pipe_scored = 1u;
 	ld	-11 (ix), #0x01
 00121$:
-;games/flappy_bird.c:401: if (bird_hits_pipe(pipe_x, gap_page, bird_y) != 0u) {
+;games/flappy_bird.c:478: if (bird_hits_pipe(pipe_x, gap_page, bird_y) != 0u) {
 	ld	h, -4 (ix)
 	ld	l, -12 (ix)
 	push	hl
@@ -1843,10 +2150,10 @@ _main::
 	inc	sp
 	or	a, a
 	jr	Z, 00124$
-;games/flappy_bird.c:402: game_over = 1u;
+;games/flappy_bird.c:479: game_over = 1u;
 	ld	-9 (ix), #0x01
 00124$:
-;games/flappy_bird.c:405: erase_bird(old_bird_y, old_pipe_x, old_gap_page);
+;games/flappy_bird.c:482: erase_bird(old_bird_y, old_pipe_x, old_gap_page);
 	ld	h, -6 (ix)
 	ld	l, -7 (ix)
 	push	hl
@@ -1856,17 +2163,17 @@ _main::
 	call	_erase_bird
 	pop	af
 	inc	sp
-;games/flappy_bird.c:406: if (pipe_x > old_pipe_x) {
+;games/flappy_bird.c:483: if (pipe_x > old_pipe_x) {
 	ld	a, -7 (ix)
 	sub	a, -2 (ix)
 	jr	NC, 00126$
-;games/flappy_bird.c:407: erase_pipe(old_pipe_x);
+;games/flappy_bird.c:484: erase_pipe(old_pipe_x);
 	ld	a, -7 (ix)
 	push	af
 	inc	sp
 	call	_erase_pipe
 	inc	sp
-;games/flappy_bird.c:408: draw_pipe(pipe_x, gap_page);
+;games/flappy_bird.c:485: draw_pipe(pipe_x, gap_page);
 	ld	h, -12 (ix)
 	ld	l, -2 (ix)
 	push	hl
@@ -1874,7 +2181,7 @@ _main::
 	pop	af
 	jr	00127$
 00126$:
-;games/flappy_bird.c:410: move_pipe_left(old_pipe_x, pipe_x, gap_page);
+;games/flappy_bird.c:487: move_pipe_left(old_pipe_x, pipe_x, gap_page);
 	ld	h, -12 (ix)
 	ld	l, -2 (ix)
 	push	hl
@@ -1885,37 +2192,37 @@ _main::
 	pop	af
 	inc	sp
 00127$:
-;games/flappy_bird.c:412: draw_bird(bird_y, frame);
+;games/flappy_bird.c:489: draw_bird(bird_y, frame);
 	ld	h, -1 (ix)
 	ld	l, -4 (ix)
 	push	hl
 	call	_draw_bird
 	pop	af
-;games/flappy_bird.c:413: if (game_over != 0u) {
+;games/flappy_bird.c:490: if (game_over != 0u) {
 	ld	a, -9 (ix)
 	or	a, a
 	jr	Z, 00129$
-;games/flappy_bird.c:414: draw_crash(bird_y);
+;games/flappy_bird.c:491: draw_crash(bird_y);
 	ld	a, -4 (ix)
 	push	af
 	inc	sp
 	call	_draw_crash
 	inc	sp
-;games/flappy_bird.c:415: draw_game_over_text();
+;games/flappy_bird.c:492: draw_game_over_text();
 	call	_draw_game_over_text
 00129$:
-;games/flappy_bird.c:417: ++frame;
+;games/flappy_bird.c:494: ++frame;
 	inc	-1 (ix)
-;games/flappy_bird.c:418: glic_delay(FLAPPY_DELAY);
-	ld	hl, #0x09c4
+;games/flappy_bird.c:495: glic_delay(FLAPPY_DELAY);
+	ld	hl, #0x1068
 	push	hl
 	call	_glic_delay
 	pop	af
 	jp	00130$
 00132$:
-;games/flappy_bird.c:421: wait_for_flap_press();
+;games/flappy_bird.c:498: wait_for_flap_press();
 	call	_wait_for_flap_press
-;games/flappy_bird.c:423: }
+;games/flappy_bird.c:500: }
 	jp	00134$
 	.area _CODE
 	.area _INITIALIZER
