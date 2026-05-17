@@ -81,6 +81,7 @@ message:
 - [Syntax reference](docs/syntax.md)
 - [Instruction set reference](docs/instruction-set.md)
 - [Development notes](docs/development.md)
+- [Compiler support implementation](docs/compiler-support.md)
 - [SDCC compatibility report](sdcc_compat_report.md)
 
 ## Tests

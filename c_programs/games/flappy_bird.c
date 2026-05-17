@@ -9,11 +9,11 @@
 static unsigned char rng_state;
 
 static const unsigned char bird_wing_up[8] = {
-    0x18u, 0x3cu, 0x7eu, 0xdbu, 0xffu, 0x7eu, 0x24u, 0x42u
+    0x18u, 0x3cu, 0x7eu, 0xffu, 0x7eu, 0x5au, 0x24u, 0x00u
 };
 
 static const unsigned char bird_wing_down[8] = {
-    0x18u, 0x3cu, 0x7eu, 0xdbu, 0xffu, 0x5au, 0x3cu, 0x18u
+    0x18u, 0x3cu, 0x7eu, 0xffu, 0x7eu, 0x24u, 0x5au, 0x00u
 };
 
 static const unsigned char bird_crash[8] = {
@@ -21,7 +21,7 @@ static const unsigned char bird_crash[8] = {
 };
 
 static const unsigned char pipe_texture[4] = {
-    0xffu, 0xbdu, 0xe7u, 0xdbu
+    0xffu, 0xe7u, 0xdbu, 0xe7u
 };
 
 static unsigned char random8(void) {
@@ -47,37 +47,8 @@ static void wait_for_button_press(void) {
     }
 }
 
-static unsigned char sky_byte(unsigned char x, unsigned char page) {
-    unsigned char value;
-
-    if (page == 15u) {
-        return ((x & 1u) != 0u) ? 0xaau : 0x55u;
-    }
-    if (page == 14u) {
-        return ((x & 2u) != 0u) ? 0x88u : 0x22u;
-    }
-
-    value = 0x00u;
-    if (((x + (page << 3)) & 31u) == 0u) {
-        value |= 0x18u;
-    }
-    if (((x + (page << 2)) & 63u) == 8u) {
-        value |= 0x40u;
-    }
-    return value;
-}
-
-static void draw_sky(void) {
-    unsigned char page;
-    unsigned char x;
-    unsigned int offset;
-
-    for (page = 0u; page < GLIC_SCREEN_PAGES; ++page) {
-        offset = ((unsigned int)page) << 7;
-        for (x = 0u; x < GLIC_SCREEN_WIDTH; ++x) {
-            GLIC_GVRAM[offset + x] = sky_byte(x, page);
-        }
-    }
+static void clear_scene(void) {
+    glic_fill_graphics(GLIC_BLACK);
 }
 
 static unsigned char pipe_byte(unsigned char pipe_x,
@@ -88,26 +59,20 @@ static unsigned char pipe_byte(unsigned char pipe_x,
     unsigned char gap_end;
 
     if ((page >= 15u) || (x < pipe_x)) {
-        return sky_byte(x, page);
+        return GLIC_BLACK;
     }
 
     local_x = (unsigned char)(x - pipe_x);
     if (local_x >= PIPE_WIDTH) {
-        return sky_byte(x, page);
+        return GLIC_BLACK;
     }
 
     gap_end = (unsigned char)(gap_page + PIPE_GAP_PAGES);
     if ((page >= gap_page) && (page < gap_end)) {
-        return sky_byte(x, page);
+        return GLIC_BLACK;
     }
 
-    if ((local_x == 0u) ||
-        (local_x == (PIPE_WIDTH - 1u)) ||
-        ((unsigned char)(page + 1u) == gap_page) ||
-        (page == gap_end)) {
-        return 0xffu;
-    }
-    return pipe_texture[(x + page) & 3u];
+    return pipe_texture[page & 3u];
 }
 
 static void restore_scene_region(unsigned char x,
@@ -144,8 +109,33 @@ static void erase_pipe(unsigned char pipe_x) {
             continue;
         }
         for (page = 0u; page < 15u; ++page) {
-            GLIC_GVRAM[(((unsigned int)page) << 7) + col] = sky_byte(col, page);
+            GLIC_GVRAM[(((unsigned int)page) << 7) + col] = GLIC_BLACK;
         }
+    }
+}
+
+static void erase_pipe_column(unsigned char x) {
+    unsigned char page;
+
+    if (x >= GLIC_SCREEN_WIDTH) {
+        return;
+    }
+    for (page = 0u; page < 15u; ++page) {
+        GLIC_GVRAM[(((unsigned int)page) << 7) + x] = GLIC_BLACK;
+    }
+}
+
+static void draw_pipe_column(unsigned char pipe_x,
+                             unsigned char gap_page,
+                             unsigned char x) {
+    unsigned char page;
+
+    if (x >= GLIC_SCREEN_WIDTH) {
+        return;
+    }
+    for (page = 0u; page < 15u; ++page) {
+        GLIC_GVRAM[(((unsigned int)page) << 7) + x] =
+            pipe_byte(pipe_x, gap_page, x, page);
     }
 }
 
@@ -164,6 +154,13 @@ static void draw_pipe(unsigned char pipe_x, unsigned char gap_page) {
                 pipe_byte(pipe_x, gap_page, col, page);
         }
     }
+}
+
+static void move_pipe_left(unsigned char old_pipe_x,
+                           unsigned char pipe_x,
+                           unsigned char gap_page) {
+    erase_pipe_column((unsigned char)(old_pipe_x + PIPE_WIDTH - 1u));
+    draw_pipe_column(pipe_x, gap_page, pipe_x);
 }
 
 static void erase_bird(unsigned char bird_y,
@@ -238,11 +235,11 @@ void main(void) {
 
     glic_clear_text();
     rng_state = 0x5au;
-    draw_sky();
+    clear_scene();
     wait_for_button_press();
 
     while (1) {
-        draw_sky();
+        clear_scene();
         bird_y = 56u;
         velocity = 0;
         pipe_x = 112u;
@@ -292,8 +289,12 @@ void main(void) {
             }
 
             erase_bird(old_bird_y, old_pipe_x, old_gap_page);
-            erase_pipe(old_pipe_x);
-            draw_pipe(pipe_x, gap_page);
+            if (pipe_x > old_pipe_x) {
+                erase_pipe(old_pipe_x);
+                draw_pipe(pipe_x, gap_page);
+            } else {
+                move_pipe_left(old_pipe_x, pipe_x, gap_page);
+            }
             draw_bird(bird_y, frame);
             if (game_over != 0u) {
                 draw_crash(bird_y);
