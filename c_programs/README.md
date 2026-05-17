@@ -26,12 +26,45 @@ for example `games/snake.c` is named `snake`.
 
 The `apps/` directory includes:
 
+- `bitcoin_miner.c`: a small offline 64-bit proof-of-work demo. Pick a toy
+  difficulty from 1 to 64 leading zero bits, start mining, and watch the current
+  nonce, attempts, hash, best zero count, and progress bar update. It does not
+  mine real Bitcoin; it keeps the mining idea small enough for this Z80 target. See
+  `apps/bitcoin_miner_README.md` for controls.
+- `mini_os.c`: a cooperative mini OS shell with three built-in C applets:
+  `COUNTER`, `MATH DRILL`, and `PIXEL PAD`. Pick an applet with up/down and
+  run it with joystick center or `[A]`; `[C]` exits an applet back to the OS.
+  Each applet saves its state in a fixed RAM block at `0x6000` before returning,
+  so re-opening it resumes the previous counter value, math progress, or pixel
+  sketch while this OS image remains loaded. `[B]` resets the selected applet's
+  saved slot from the OS menu. See `apps/mini_os_README.md` for the memory
+  layout and applet pattern.
 - `text_editor.c`: a three-slot RAM text editor. Use up/down to pick a file,
   joystick center to edit, `[A]` to view, `[B]` to erase, and `[C]` for help.
   In the editor, move around the on-screen keyboard with the joystick, press
   center to type, `[A]` to save, `[B]` to delete, and `[C]` to return to the
   file list. Saved files stay in RAM while the editor is running; restarting a
   Z80 program reloads clean memory on GLIČ80 hardware.
+- `oneaddr_basic.c`: a tiny on-device BASIC-like interpreter. The editable
+  program text lives at fixed RAM address `0x6006` (`0x6000` holds a small
+  header and length). Use joystick center to type from the on-screen keyboard,
+  the `NL` key to insert a newline, `[A]` then `[A]` again to run, `[A]` then
+  up/down to scroll, `[B]` to delete, and `[C]` to open the instruction browser
+  from the menu. The editor shows visible newline markers and a source
+  scrollbar. Supported statements are `PRINT`, `LET` or
+  direct assignment such as `A=A+1`, `IF expr THEN statement`,
+  `FOR var=start TO end` with optional `STEP`, `NEXT`, `INPUT var` for the
+  current button mask, `WAIT expr`, `CLS`, `REM`, and `END`. Expressions
+  support variables `A`-`Z`, decimal numbers, `+`, `-`, `*`, `/`, parentheses,
+  comparisons, and `BTN` for the current button mask. See
+  `apps/oneaddr_basic_README.md` for the full language notes.
+- `mini_browser.c`: a tiny HTML/CSS viewer with a 64-column virtual page, four
+  times the visible screen width. Up/down scroll vertically, left/right pan
+  horizontally, `[A]`/`[B]` page down/up, center returns home, and `[C]` opens
+  help. It renders a compact subset of block/inline HTML, entities, images as
+  placeholders, and CSS spacing/border/hidden/pre/uppercase rules. It can use
+  embedded HTML or a preloaded `HTM1` RAM page at `0x6000`; see
+  `apps/mini_browser_README.md` for the loading format and supported CSS.
 
 The `games/` directory includes:
 
