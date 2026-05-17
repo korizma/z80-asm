@@ -1,0 +1,57 @@
+GLIČ80 - jednostavan Z80 nastavni računar
+
+Arhitektura i dizajn: Ivan Glišin
+Projekat i razvoj: Časlav Mijušković
+Firmware i UI: Igor, Kušla, Bokor, Anja, Stefan (IS Petnica)
+Izrada: Maja, Mara, Gane, Boki, Zex, Nidža (FinBet)
+Razvoj: MART 2025-APRIL 2026
+
+SPECIFIKACIJA
+
+CPU: Z80 na 6 MHz
+RAM: 32K statička memorija
+INP: Osmobitni ulazni port za očitavanje osam tastera (5-way džojstik i tasteri ABC) 
+OUT: Osmobitni izlazni port za upravljanje LED trakom od osam svetlećih dioda
+OSTALO: jedan dekoder MREQ/IORQ/RD/WR signala i prateća elektronika (otpornici i kondenzatori)
+EKRAN: OLED 128x128 i LED traka sa 8 dioda
+Kontrola: RP2040 koji obezbeđuje COM vezu sa PC računarom, korisnički interfejs, prebacivanje koda u 32K RAM, generisanje kloka od 6 MHz i interapt signala od 20 Hz za Z80
+
+ORGANIZACIJA MEMORIJE:
+
+$0000-$76FF: korisnička memorija za slobodnu upotrebu
+$7700-$77FF: 256 bajtova CVRAM karakter video memorije za prikaz 16x16 karaktera
+$7800-$78FF: 2K bajtova GVRAM grafičke video memorije za grafiku od 128x128 piksela
+
+TRANSFER BINARNOG KODA
+
+Dok je prikazan glavni ekran RP2040 sluša COM port. Čim transfer započne na ekranu se prikazuje poruka "Loading..." i prelazi se u mod za prijem serije bajtova. Transfer se prekida posle pauze u prenosu od 1s i program se smešta u privremeni bafer koji je označen sa TEMP. Ako je postojao prethodno učitan program biće zamenjen novim. Program se sada može startovati kratkim pritiskom na taster [X], ili snimiti u praznu banku duplim klikom na taster [X].
+
+POKRETANJE I ZAUSTAVLJANJE Z80
+
+Pokretanje učitanog programa sa glavnog ekrana se obavlja pritiskom na taster [X]. Od tog momenta kontrola je predata Z80 koji izvršava program. Prekid Z80 programa i povratak na glavni ekran se obavlja ponovnim pritiskom na taster [X]. Svako pokretanje Z80 programa sa [X] ponovo prebacuje kompletan kod i kreće od čiste memorije.
+
+GENERISANJE PRIKAZA NA EKRANU
+
+Tokom rada Z80 programa RP2040 generiše interapt 20 puta u sekundi. Pre svakog interapta zaustavi Z80, preuzme magistralu i prepiše poslednjih 2K RAM memorije na OLED displej kao grafiku 128x128 tačaka (počinje na $7800), ili prema definiciji internog fonta generiše karaktere u 16x16 matrici iz 256 bajtova iz karakter video memorije koja se nalazi ispred grafičke video memorije (počinje na $7700). Ukoliko je ASCII kod karaktera 0 on je "providan" i prikazuje se matrica 8x8 piksela iz grafičke memorije. Ukoliko je ASCII kod 1 ili više prikazuje se taj karakter bez obzira šta je u grafičkoj video memoriji. Pikseli u GVRAM bajtovima su organizovani vertikalno, gde je bit 0 gornji piksel.
+
+TASTERI
+
+Taster [X] (eXecute) je povezan na GPIO pin RP2040 i služi za upravljanje UI delom koji kontroliše RP2040. Tasteri [A], [B], [C] i džojstik su povezani na magistralu Z80 i na raspolaganju su za Z80 programe. Tako Z80 ne može da očita stanje tastera [X] dok radi, a RP2040 ne može da očita stanje tastera [A], [B], [C] i džojstika. Tasteri na raspolaganju Z80 se očitavaju instrukcijom IN (0),A preko 74HCT244, a tasteri se mapiraju na sledeće bitove:
+
+Bit 0: Džojstik - pritisak na centralni taster
+Bit 1: Džojstik - gore
+Bit 2: Džojstik - desno
+Bit 3: Džojstik - dole
+Bit 4: Džojstik - levo
+Bit 5: [C]
+Bit 6: [B]
+Bit 7: [A]
+
+LED TRAKA
+
+LED traka se aktivira instrukcijom OUT (0),A koja upisuje sadržaj u 74HCT273 koji je povezan na diode u LED traci, gde bitovi odgovaraju sadržaju registra (krajnje levo bit 7, krajnje desno bit 0). Sadržaj ostaje trajno upisan do promene vrednosti.
+
+KORIŠĆENJE STEKA
+
+Ako se koristi, stek mora da bude ispod CVRAM lokacije. Podešava se sa LD SP,$7700 ili manje (iako je $7700 prvi bajt u CVRAM prvi PUSH/CALL prvo smanji SP pa će prva vrednost biti upisana ispod CVRAM). Ukoliko je potrebno vizuelno demonstrirati kako stek radi, SP se može postaviti i u neki VRAM (recimo LD SP,$7800 ili LD SP,$8000 što može da bude interesantno).
+
