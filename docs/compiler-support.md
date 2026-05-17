@@ -38,6 +38,7 @@ Implemented directive support:
   binary output.
 - Dotted data directives such as `.db`, `.dw`, and `.ds` are accepted as aliases
   for `DB`, `DW`, and `DS`.
+- `.ascii` emits quoted string bytes, matching SDCC string literal output.
 - `.area` does not reorder or relocate sections. Bytes are emitted in source
   order.
 

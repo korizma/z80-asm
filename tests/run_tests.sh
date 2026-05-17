@@ -71,7 +71,7 @@ check_bin core "3e1247808ede349e91dda602fdb6ffee55b820fd10ea"
 check_bin load "dd7705dd36069afd4efe2234122a3412ed4b3412dd217856fd2a0020ddf9ed57ed4f021aed7b1111"
 check_bin cb_ed "cb5fcbfeddcb0186cb11fdcbfe3eed7aed52edb0ed78db44ed69d355ffed5eed6fed67"
 check_bin flow "c30900cc0900d0180100cd0900c9"
-check_bin directives "415a01ff0a0001341200ee11332244441001"
+check_bin directives "415a01ff0a0001341200ee113322444448691201"
 check_bin fixed "08ebdde3d93f37272f17071f0fed4ded45ed4476"
 check_bin compat "18064869000000003e051800c30c000000"
 check_bin ds_labels "210700000000000700"
@@ -96,11 +96,11 @@ if command -v sdcc-sdcc >/dev/null 2>&1 || command -v sdcc >/dev/null 2>&1; then
         prefix=$(python3 - "$OUT/test_main_tool.bin" <<'PY'
 from pathlib import Path
 import sys
-print(Path(sys.argv[1]).read_bytes()[:8].hex())
+print(Path(sys.argv[1]).read_bytes()[:15].hex())
 PY
 )
         case "$prefix" in
-            310077cd????18fe)
+            180a746573745f6d61696e00310077)
                 printf 'ok   sdcc-z80-bin\n'
                 ;;
             *)

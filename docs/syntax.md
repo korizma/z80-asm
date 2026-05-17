@@ -164,6 +164,16 @@ DS 8,$FF       ; eight bytes filled with $FF
 The size must be a non-negative expression known during pass 1. The optional
 fill value must be in the range `-128..255` and defaults to zero.
 
+### ASCII
+
+`.ascii` emits one or more quoted strings without adding a terminator. It is
+accepted for SDCC/ASxxxx compatibility.
+
+```asm
+.ascii "Text"
+.ascii "A","B"
+```
+
 ### SDCC/ASxxxx Metadata
 
 The following SDCC/ASxxxx directives are accepted as no-ops for flat binary

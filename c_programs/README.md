@@ -21,8 +21,14 @@ make -C c_programs
 ```
 
 Generated binaries are written under `c_programs/bin/`.
+Each binary starts with a GLIČ80 title header using the source filename stem,
+for example `games/snake.c` is named `snake`.
 
 The `games/` directory includes:
 
 - `flappy_bird.c`: press joystick center, up, or `[A]` to flap.
 - `snake.c`: move with the joystick directions.
+- `sudoku.c`: choose level 1-5 on the title screen, press joystick center
+  to start, use arrows to move, `[A]`/`[B]` to pick a number, joystick center
+  to place it, and `[C]` to return to the title screen. Wrong placements blink
+  the selected tile.

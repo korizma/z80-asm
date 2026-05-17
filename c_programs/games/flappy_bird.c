@@ -7,6 +7,7 @@
 #define FLAP_MASK (GLIC_BTN_CENTER | GLIC_BTN_UP | GLIC_BTN_A)
 
 static unsigned char rng_state;
+static unsigned char score;
 
 static const unsigned char bird_wing_up[8] = {
     0x18u, 0x3cu, 0x7eu, 0xffu, 0x7eu, 0x5au, 0x24u, 0x00u
@@ -35,16 +36,85 @@ static unsigned char random8(void) {
     return rng_state;
 }
 
-static void wait_for_button_press(void) {
-    while (glic_read_buttons() != GLIC_BUTTONS_NONE) {
+static unsigned char flap_pressed(unsigned char buttons) {
+    return (buttons & FLAP_MASK) != FLAP_MASK;
+}
+
+static void wait_for_flap_press(void) {
+    while (flap_pressed(glic_read_buttons()) != 0u) {
         random8();
     }
-    while (glic_read_buttons() == GLIC_BUTTONS_NONE) {
+    while (flap_pressed(glic_read_buttons()) == 0u) {
         random8();
     }
-    while (glic_read_buttons() != GLIC_BUTTONS_NONE) {
+    while (flap_pressed(glic_read_buttons()) != 0u) {
         random8();
     }
+}
+
+static volatile unsigned char *text_cell(unsigned char row,
+                                         unsigned char col) {
+    volatile unsigned char *p;
+
+    p = GLIC_CVRAM;
+    while (row != 0u) {
+        p += 16u;
+        --row;
+    }
+    p += col;
+    return p;
+}
+
+static void text_put(unsigned char row, unsigned char col, unsigned char ch) {
+    if ((row >= 16u) || (col >= 16u)) {
+        return;
+    }
+    *text_cell(row, col) = ch;
+}
+
+static void text_clear_row(unsigned char row) {
+    unsigned char col;
+
+    for (col = 0u; col < 16u; ++col) {
+        text_put(row, col, 0u);
+    }
+}
+
+static void text_write(unsigned char row, unsigned char col, const char *text) {
+    while ((*text != 0) && (col < 16u)) {
+        text_put(row, col, (unsigned char)*text);
+        ++text;
+        ++col;
+    }
+}
+
+static void text_write_u8_3(unsigned char row,
+                            unsigned char col,
+                            unsigned char value) {
+    unsigned char hundreds;
+    unsigned char tens;
+
+    hundreds = 0u;
+    while (value >= 100u) {
+        value = (unsigned char)(value - 100u);
+        ++hundreds;
+    }
+    tens = 0u;
+    while (value >= 10u) {
+        value = (unsigned char)(value - 10u);
+        ++tens;
+    }
+    text_put(row, col, (unsigned char)('0' + hundreds));
+    text_put(row, (unsigned char)(col + 1u), (unsigned char)('0' + tens));
+    text_put(row,
+             (unsigned char)(col + 2u),
+             (unsigned char)('0' + value));
+}
+
+static void draw_score(void) {
+    text_clear_row(0u);
+    text_write(0u, 0u, "SCORE");
+    text_write_u8_3(0u, 6u, score);
 }
 
 static void clear_scene(void) {
@@ -159,7 +229,12 @@ static void draw_pipe(unsigned char pipe_x, unsigned char gap_page) {
 static void move_pipe_left(unsigned char old_pipe_x,
                            unsigned char pipe_x,
                            unsigned char gap_page) {
-    erase_pipe_column((unsigned char)(old_pipe_x + PIPE_WIDTH - 1u));
+    unsigned char old_right;
+
+    old_right = (unsigned char)(old_pipe_x + PIPE_WIDTH - 1u);
+    if (old_right < GLIC_SCREEN_WIDTH) {
+        erase_pipe_column(old_right);
+    }
     draw_pipe_column(pipe_x, gap_page, pipe_x);
 }
 
@@ -219,11 +294,35 @@ static void draw_crash(unsigned char bird_y) {
     }
 }
 
+static void draw_title_screen(void) {
+    glic_prepare_screen(GLIC_BLACK);
+    draw_pipe(96u, 5u);
+    draw_bird(56u, 0u);
+    text_write(2u, 2u, "FLAPPY BIRD");
+    text_write(5u, 1u, "FLAP TO START");
+    text_write(7u, 2u, "UP/A FLAP");
+    text_write(11u, 2u, "DODGE PIPES");
+}
+
+static void draw_game_over_text(void) {
+    text_clear_row(5u);
+    text_clear_row(6u);
+    text_clear_row(7u);
+    text_clear_row(8u);
+    text_clear_row(10u);
+    text_write(5u, 3u, "GAME OVER");
+    text_write(7u, 4u, "SCORE");
+    text_write_u8_3(7u, 10u, score);
+    text_write(10u, 3u, "FLAP MENU");
+}
+
 void main(void) {
     unsigned char buttons;
     unsigned char last_buttons;
     unsigned char pipe_x;
     unsigned char gap_page;
+    unsigned char pipe_right;
+    unsigned char pipe_scored;
     unsigned char bird_y;
     unsigned char frame;
     unsigned char game_over;
@@ -235,28 +334,32 @@ void main(void) {
 
     glic_clear_text();
     rng_state = 0x5au;
-    clear_scene();
-    wait_for_button_press();
 
     while (1) {
+        draw_title_screen();
+        wait_for_flap_press();
         clear_scene();
+        glic_clear_text();
         bird_y = 56u;
         velocity = 0;
         pipe_x = 112u;
         gap_page = 5u;
+        pipe_scored = 0u;
+        score = 0u;
         frame = 0u;
         last_buttons = GLIC_BUTTONS_NONE;
         game_over = 0u;
         draw_pipe(pipe_x, gap_page);
         draw_bird(bird_y, frame);
+        draw_score();
 
         while (game_over == 0u) {
             old_bird_y = bird_y;
             old_pipe_x = pipe_x;
             old_gap_page = gap_page;
             buttons = glic_read_buttons();
-            if (((last_buttons & FLAP_MASK) == FLAP_MASK) &&
-                ((buttons & FLAP_MASK) != FLAP_MASK)) {
+            if ((flap_pressed(last_buttons) == 0u) &&
+                (flap_pressed(buttons) != 0u)) {
                 velocity = -5;
             } else if (velocity < 4) {
                 ++velocity;
@@ -280,8 +383,18 @@ void main(void) {
                 if (gap_page > 9u) {
                     gap_page = 9u;
                 }
+                pipe_scored = 0u;
             } else {
                 --pipe_x;
+            }
+
+            pipe_right = (unsigned char)(pipe_x + PIPE_WIDTH - 1u);
+            if ((pipe_scored == 0u) && (pipe_right < BIRD_X)) {
+                if (score < 255u) {
+                    ++score;
+                }
+                draw_score();
+                pipe_scored = 1u;
             }
 
             if (bird_hits_pipe(pipe_x, gap_page, bird_y) != 0u) {
@@ -298,11 +411,12 @@ void main(void) {
             draw_bird(bird_y, frame);
             if (game_over != 0u) {
                 draw_crash(bird_y);
+                draw_game_over_text();
             }
             ++frame;
             glic_delay(FLAPPY_DELAY);
         }
 
-        wait_for_button_press();
+        wait_for_flap_press();
     }
 }

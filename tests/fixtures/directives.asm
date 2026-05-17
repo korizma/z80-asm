@@ -8,5 +8,6 @@ ORG 0x10A
     .db 0x11
     .dw 0x2233
     .ds 2,0x44
+    .ascii "H","i"
 addr_test:
     .db <addr_test, >addr_test

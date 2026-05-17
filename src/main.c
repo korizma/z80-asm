@@ -1972,6 +1972,36 @@ static int handle_db(EmitCtx *ectx, const char *rest) {
     return 0;
 }
 
+static int handle_ascii(EmitCtx *ectx, const char *rest, const char *name) {
+    StringList list;
+    if (split_list(ectx->asmr, ectx->line, rest, &list) != 0) {
+        return -1;
+    }
+    for (size_t i = 0; i < list.len; i++) {
+        unsigned char *bytes = NULL;
+        size_t len = 0;
+        int rc = decode_string_item(ectx->asmr, ectx->line, list.items[i], &bytes, &len);
+        if (rc < 0) {
+            free_string_list(&list);
+            return -1;
+        }
+        if (rc != 0) {
+            free_string_list(&list);
+            return set_error(ectx->asmr, ectx->line, "%s expects string literal operands", name);
+        }
+        for (size_t j = 0; j < len; j++) {
+            if (emit_byte(ectx, bytes[j]) != 0) {
+                free(bytes);
+                free_string_list(&list);
+                return -1;
+            }
+        }
+        free(bytes);
+    }
+    free_string_list(&list);
+    return 0;
+}
+
 static int handle_dw(EmitCtx *ectx, const char *rest) {
     StringList list;
     if (split_list(ectx->asmr, ectx->line, rest, &list) != 0) {
@@ -2176,6 +2206,15 @@ static int process_line(Assembler *asmr, const SourceLine *line, int pass,
             return set_error(asmr, line, "%s requires at least one value", mnemonic);
         }
         int rc = handle_db(&ectx, rest);
+        free(clean);
+        return rc;
+    }
+    if (eq_ci(directive, "ASCII")) {
+        if (*rest == '\0') {
+            free(clean);
+            return set_error(asmr, line, "%s requires at least one string", mnemonic);
+        }
+        int rc = handle_ascii(&ectx, rest, mnemonic);
         free(clean);
         return rc;
     }
