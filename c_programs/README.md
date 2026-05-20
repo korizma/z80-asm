@@ -26,11 +26,19 @@ for example `games/snake.c` is named `snake`.
 
 The `apps/` directory includes:
 
+- `dvd_screensaver.c`: a monochrome DVD-logo screensaver demo. It draws a
+  stylized `DVD` logo directly into the 128 by 128 OLED graphics RAM and
+  bounces it around the screen.
 - `bitcoin_miner.c`: a small offline 64-bit proof-of-work demo. Pick a toy
   difficulty from 1 to 64 leading zero bits, start mining, and watch the current
   nonce, attempts, hash, best zero count, and progress bar update. It does not
   mine real Bitcoin; it keeps the mining idea small enough for this Z80 target. See
   `apps/bitcoin_miner_README.md` for controls.
+- `brainfuck.c`: an on-device Brainfuck compiler and bytecode runner. Edit a
+  Brainfuck program and a separate input buffer, compile the source with bracket
+  validation, then run it with text output on the GLIČ80 screen. `,` reads bytes
+  from the input buffer and `.` writes output. See `apps/brainfuck_README.md`
+  for controls and limits.
 - `mini_os.c`: a cooperative mini OS shell with three built-in C applets:
   `COUNTER`, `MATH DRILL`, and `PIXEL PAD`. Pick an applet with up/down and
   run it with joystick center or `[A]`; `[C]` exits an applet back to the OS.
@@ -65,6 +73,10 @@ The `apps/` directory includes:
   placeholders, and CSS spacing/border/hidden/pre/uppercase rules. It can use
   embedded HTML or a preloaded `HTM1` RAM page at `0x6000`; see
   `apps/mini_browser_README.md` for the loading format and supported CSS.
+- `z80_emulator.c`: a small Z80-in-Z80 interpreter demo. The home screen starts
+  with `[A]`, the bundled guest assembly draws the Japan flag through emulated
+  GLIČ80 VRAM writes, and pressing `[A]` twice inside the emulator returns home.
+  See `apps/z80_emulator_README.md` for the guest memory map and opcode scope.
 
 The `games/` directory includes:
 
